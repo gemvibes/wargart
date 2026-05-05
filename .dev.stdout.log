@@ -1,0 +1,19 @@
+
+> wargart@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.18.8:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 7.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 11s (556 modules)
+ GET / 307 in 12106ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1770ms (549 modules)
+ GET /login 200 in 2708ms
+ GET / 307 in 542ms
+ GET /login 200 in 268ms
