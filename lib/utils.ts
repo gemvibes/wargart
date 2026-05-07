@@ -53,7 +53,9 @@ export function downloadTextFile(filename: string, content: string, type: string
 }
 
 export function downloadBase64File(filename: string, base64Data: string, type: string) {
-  const binary = window.atob(base64Data);
+  const normalized = base64Data.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+  const binary = window.atob(padded);
   const bytes = new Uint8Array(binary.length);
 
   for (let index = 0; index < binary.length; index += 1) {
