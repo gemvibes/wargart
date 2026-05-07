@@ -121,9 +121,10 @@ export interface KegiatanDetailResponse {
 }
 
 export interface ExportFilePayload {
-  fileName: string;
-  mimeType: string;
-  base64Data: string;
+  fileName?: string;
+  mimeType?: string;
+  base64Data?: string;
+  fileUrl?: string;
 }
 
 export interface RekapKehadiranItem {

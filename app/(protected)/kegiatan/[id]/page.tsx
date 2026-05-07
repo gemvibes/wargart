@@ -95,7 +95,19 @@ export default function KegiatanDetailPage() {
   async function handleExport(format: "pdf" | "docx") {
     try {
       const result = await apiClient.exportKegiatan(kegiatanId, format);
-      downloadBase64File(result.fileName, result.base64Data, result.mimeType);
+      if (result.base64Data && result.fileName && result.mimeType) {
+        downloadBase64File(result.fileName, result.base64Data, result.mimeType);
+        return;
+      }
+
+      if (result.fileUrl) {
+        window.open(result.fileUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      throw new Error(
+        "Format respons export belum lengkap. Pastikan deploy frontend terbaru aktif dan GAS sudah sinkron."
+      );
     } catch (exportError) {
       setError(exportError instanceof Error ? exportError.message : "Export gagal diproses.");
     }
