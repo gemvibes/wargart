@@ -326,7 +326,7 @@ function drawSignatureColumns(
   boldFont: PDFFont,
   font: PDFFont
 ) {
-  const blockHeight = 120;
+  const blockHeight = 148;
   const nextState = ensureSpace(pdfDoc, state, blockHeight);
   const gap = 24;
   const totalWidth = nextState.page.getWidth() - PAGE_MARGIN * 2;
@@ -346,25 +346,26 @@ function drawSignatureColumns(
     });
   };
 
-  drawCentered("Ketua RT", leftX, columnWidth, topY, font, 11);
-  drawCentered("Sekretaris", rightX, columnWidth, topY, font, 11);
+  drawCentered("Mengetahui,", PAGE_MARGIN, totalWidth, topY, font, 11);
+  drawCentered("Ketua RT", leftX, columnWidth, topY - 22, font, 11);
+  drawCentered("Sekretaris", rightX, columnWidth, topY - 22, font, 11);
 
   nextState.page.drawLine({
-    start: { x: leftX + 28, y: topY - 66 },
-    end: { x: leftX + columnWidth - 28, y: topY - 66 },
+    start: { x: leftX + 28, y: topY - 92 },
+    end: { x: leftX + columnWidth - 28, y: topY - 92 },
     thickness: 0.8,
     color: BORDER_COLOR
   });
 
   nextState.page.drawLine({
-    start: { x: rightX + 28, y: topY - 66 },
-    end: { x: rightX + columnWidth - 28, y: topY - 66 },
+    start: { x: rightX + 28, y: topY - 92 },
+    end: { x: rightX + columnWidth - 28, y: topY - 92 },
     thickness: 0.8,
     color: BORDER_COLOR
   });
 
-  drawCentered(ketua || "(Nama Ketua RT)", leftX, columnWidth, topY - 82, boldFont, 11);
-  drawCentered(sekretaris || "(Nama Sekretaris)", rightX, columnWidth, topY - 82, boldFont, 11);
+  drawCentered(ketua || "(Nama Ketua RT)", leftX, columnWidth, topY - 108, boldFont, 11);
+  drawCentered(sekretaris || "(Nama Sekretaris)", rightX, columnWidth, topY - 108, boldFont, 11);
 
   nextState.y -= blockHeight;
   return nextState;
@@ -419,21 +420,16 @@ function chunkPhotos<T>(items: T[], chunkSize: number) {
 function drawPhotoCard(
   page: PDFPage,
   image: PDFImage,
-  caption: string,
   x: number,
   y: number,
   width: number,
-  height: number,
-  font: PDFFont
+  height: number
 ) {
-  const captionLines = splitTextLines(caption || "Tanpa caption", font, 9, width - 12).slice(0, 2);
-  const captionHeight = captionLines.length ? captionLines.length * 12 + 8 : 0;
-  const imageAreaHeight = height - captionHeight - 8;
-  const imageScale = Math.min(width / image.width, imageAreaHeight / image.height, 1);
+  const imageScale = Math.min(width / image.width, height / image.height, 1);
   const imageWidth = image.width * imageScale;
   const imageHeight = image.height * imageScale;
   const imageX = x + (width - imageWidth) / 2;
-  const imageY = y + captionHeight + (imageAreaHeight - imageHeight) / 2;
+  const imageY = y + (height - imageHeight) / 2;
 
   page.drawImage(image, {
     x: imageX,
@@ -441,27 +437,15 @@ function drawPhotoCard(
     width: imageWidth,
     height: imageHeight
   });
-
-  captionLines.forEach((line, index) => {
-    page.drawText(line, {
-      x: x + 6,
-      y: y + captionHeight - 10 - index * 12,
-      size: 9,
-      font,
-      color: MUTED_COLOR
-    });
-  });
 }
 
 async function addPhotoGridPages(
   pdfDoc: PDFDocument,
   photos: KegiatanPdfExportPayload["photos"],
-  boldFont: PDFFont,
-  font: PDFFont
+  boldFont: PDFFont
 ) {
   const embeddedPhotos = await Promise.all(
     photos.map(async (photo) => ({
-      caption: photo.caption || photo.file_name,
       image: await embedImage(pdfDoc, photo.mime_type, base64ToUint8Array(photo.base64_data))
     }))
   );
@@ -483,9 +467,9 @@ async function addPhotoGridPages(
     });
 
     const gridTop = pageHeight - PAGE_MARGIN - 28;
-    const gridBottom = PAGE_MARGIN + 20;
+    const gridBottom = PAGE_MARGIN + 8;
     const gridHeight = gridTop - gridBottom;
-    const gap = 10;
+    const gap = 8;
     const cellWidth = (pageWidth - PAGE_MARGIN * 2 - gap) / 2;
     const cellHeight = (gridHeight - gap) / 2;
 
@@ -496,7 +480,7 @@ async function addPhotoGridPages(
       const topY = gridTop - row * (cellHeight + gap);
       const y = topY - cellHeight;
 
-      drawPhotoCard(page, photo.image, photo.caption, x, y, cellWidth, cellHeight, font);
+      drawPhotoCard(page, photo.image, x, y, cellWidth, cellHeight);
     });
   });
 }
@@ -557,6 +541,7 @@ export async function downloadKegiatanPdf(payload: KegiatanPdfExportPayload) {
     font
   );
 
+  state.y -= 18;
   state = drawSignatureColumns(
     pdfDoc,
     state,
@@ -567,7 +552,7 @@ export async function downloadKegiatanPdf(payload: KegiatanPdfExportPayload) {
   );
 
   if (payload.photos.length) {
-    await addPhotoGridPages(pdfDoc, payload.photos, boldFont, font);
+    await addPhotoGridPages(pdfDoc, payload.photos, boldFont);
   }
 
   const bytes = await pdfDoc.save();
