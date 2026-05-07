@@ -35,13 +35,13 @@ export function WargaFormModal({
   useEffect(() => {
     if (initialValue) {
       setForm({
-        nama: initialValue.nama,
-        status_tinggal: initialValue.status_tinggal,
-        nomor_rumah: initialValue.nomor_rumah,
-        jumlah_anggota_kk: initialValue.jumlah_anggota_kk,
-        dawis: initialValue.dawis,
-        status: initialValue.status,
-        catatan: initialValue.catatan
+        nama: initialValue.nama ?? "",
+        status_tinggal: initialValue.status_tinggal ?? initialForm.status_tinggal,
+        nomor_rumah: initialValue.nomor_rumah ?? "",
+        jumlah_anggota_kk: initialValue.jumlah_anggota_kk ?? initialForm.jumlah_anggota_kk,
+        dawis: initialValue.dawis ?? initialForm.dawis,
+        status: initialValue.status ?? initialForm.status,
+        catatan: initialValue.catatan ?? ""
       });
     } else {
       setForm(initialForm);
@@ -52,12 +52,12 @@ export function WargaFormModal({
     event.preventDefault();
     setError("");
 
-    if (!form.nama.trim()) {
+    if (!initialValue && !form.nama.trim()) {
       setError("Nama warga wajib diisi.");
       return;
     }
 
-    if (!form.nomor_rumah.trim()) {
+    if (!initialValue && !form.nomor_rumah.trim()) {
       setError("Nomor rumah wajib diisi.");
       return;
     }
