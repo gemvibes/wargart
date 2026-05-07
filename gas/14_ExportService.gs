@@ -1,16 +1,5 @@
-function exportKegiatan_(body, payload) {
+function buildKegiatanExportContext_(body, kegiatanId) {
   const user = requireAuth_(body.token);
-  const kegiatanId = getRequiredValue_(payload.kegiatan_id, "kegiatan_id wajib diisi.");
-  const format = sanitizeText_(payload.format).toLowerCase();
-  if (["pdf", "docx"].indexOf(format) === -1) {
-    throw new Error("Format export hanya mendukung pdf atau docx.");
-  }
-
-  const templateId = PropertiesService.getScriptProperties().getProperty(CONFIG.PROPERTIES.DOC_TEMPLATE_ID);
-  if (!templateId) {
-    throw new Error("Property DOC_TEMPLATE_ID belum diatur.");
-  }
-
   const settings = getSettingsObject_();
   const kegiatan = findById_(CONFIG.SHEETS.KEGIATAN, "kegiatan_id", kegiatanId);
   const attendance = getKegiatanKehadiran_({
@@ -22,6 +11,74 @@ function exportKegiatan_(body, payload) {
   const photos = readSheetAsObjects(CONFIG.SHEETS.FOTO).filter(function (item) {
     return String(item.kegiatan_id) === kegiatanId;
   });
+
+  return {
+    user: user,
+    settings: settings,
+    kegiatan: kegiatan,
+    attendance: attendance,
+    photos: photos
+  };
+}
+
+function buildExportFileName_(namaKegiatan, extension) {
+  return (
+    "Laporan " +
+    sanitizeText_(namaKegiatan)
+      .replace(/[\\\/:*?"<>|]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim() +
+    extension
+  );
+}
+
+function getKegiatanPdfData_(body, payload) {
+  const kegiatanId = getRequiredValue_(payload.kegiatan_id, "kegiatan_id wajib diisi.");
+  const context = buildKegiatanExportContext_(body, kegiatanId);
+  const hadirOnly = context.attendance.filter(function (item) {
+    return String(item.status_hadir) === "Hadir";
+  });
+
+  const photos = context.photos.map(function (photo) {
+    const blob = DriveApp.getFileById(photo.file_id).getBlob();
+    return {
+      file_name: photo.file_name,
+      caption: photo.caption || "",
+      mime_type: blob.getContentType(),
+      base64_data: Utilities.base64Encode(blob.getBytes())
+    };
+  });
+
+  logAction(context.user.user_id, "get_kegiatan_pdf_data", kegiatanId);
+  return {
+    file_name: buildExportFileName_(context.kegiatan.nama_kegiatan, ".pdf"),
+    kegiatan: context.kegiatan,
+    attendance: hadirOnly,
+    photos: photos,
+    generated_at: nowIso_(),
+    nama_ketua_rt: context.settings.nama_ketua_rt || "(Nama Ketua RT)",
+    nama_sekretaris: context.settings.nama_sekretaris || context.user.nama
+  };
+}
+
+function exportKegiatan_(body, payload) {
+  const kegiatanId = getRequiredValue_(payload.kegiatan_id, "kegiatan_id wajib diisi.");
+  const format = sanitizeText_(payload.format).toLowerCase();
+  if (["pdf", "docx"].indexOf(format) === -1) {
+    throw new Error("Format export hanya mendukung pdf atau docx.");
+  }
+
+  const templateId = PropertiesService.getScriptProperties().getProperty(CONFIG.PROPERTIES.DOC_TEMPLATE_ID);
+  if (!templateId) {
+    throw new Error("Property DOC_TEMPLATE_ID belum diatur.");
+  }
+
+  const context = buildKegiatanExportContext_(body, kegiatanId);
+  const user = context.user;
+  const settings = context.settings;
+  const kegiatan = context.kegiatan;
+  const attendance = context.attendance;
+  const photos = context.photos;
 
   const copyName = "Laporan " + kegiatan.nama_kegiatan + " " + new Date().getTime();
   const copiedFile = DriveApp.getFileById(templateId).makeCopy(copyName);
@@ -102,7 +159,7 @@ function exportKegiatan_(body, payload) {
     const exportFile = DriveApp.getFileById(copiedFileId);
     const mimeType = format === "pdf" ? MimeType.PDF : MimeType.MICROSOFT_WORD;
     const extension = format === "pdf" ? ".pdf" : ".docx";
-    const fileName = copyName + extension;
+    const fileName = buildExportFileName_(kegiatan.nama_kegiatan, extension);
     const blob = exportFile.getAs(mimeType).setName(fileName);
 
     logAction(user.user_id, "export_kegiatan_" + format, kegiatanId);

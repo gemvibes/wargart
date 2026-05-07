@@ -52,8 +52,12 @@ export function downloadTextFile(filename: string, content: string, type: string
   URL.revokeObjectURL(url);
 }
 
-export function downloadBase64File(filename: string, base64Data: string, type: string) {
-  const normalized = base64Data.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+export function normalizeBase64(base64Data: string) {
+  return base64Data.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+}
+
+export function base64ToUint8Array(base64Data: string) {
+  const normalized = normalizeBase64(base64Data);
   const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
   const binary = window.atob(padded);
   const bytes = new Uint8Array(binary.length);
@@ -62,6 +66,11 @@ export function downloadBase64File(filename: string, base64Data: string, type: s
     bytes[index] = binary.charCodeAt(index);
   }
 
+  return bytes;
+}
+
+export function downloadBase64File(filename: string, base64Data: string, type: string) {
+  const bytes = base64ToUint8Array(base64Data);
   const blob = new Blob([bytes], { type });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");

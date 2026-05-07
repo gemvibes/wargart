@@ -127,6 +127,23 @@ export interface ExportFilePayload {
   fileUrl?: string;
 }
 
+export interface ExportPhotoAsset {
+  file_name: string;
+  caption: string;
+  mime_type: string;
+  base64_data: string;
+}
+
+export interface KegiatanPdfExportPayload {
+  file_name: string;
+  kegiatan: Kegiatan;
+  attendance: AttendanceItem[];
+  photos: ExportPhotoAsset[];
+  generated_at: string;
+  nama_ketua_rt: string;
+  nama_sekretaris: string;
+}
+
 export interface RekapKehadiranItem {
   warga_id: string;
   nama: string;

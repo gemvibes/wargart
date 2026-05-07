@@ -11,6 +11,7 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { apiClient } from "@/lib/api/client";
+import { downloadKegiatanPdf } from "@/lib/pdf/kegiatanPdf";
 import { AttendanceItem, Kegiatan, KegiatanPayload, KegiatanDetailResponse } from "@/lib/types";
 import { downloadBase64File, formatDate } from "@/lib/utils";
 
@@ -94,6 +95,12 @@ export default function KegiatanDetailPage() {
 
   async function handleExport(format: "pdf" | "docx") {
     try {
+      if (format === "pdf") {
+        const pdfData = await apiClient.getKegiatanPdfData(kegiatanId);
+        await downloadKegiatanPdf(pdfData);
+        return;
+      }
+
       const result = await apiClient.exportKegiatan(kegiatanId, format);
       if (result.base64Data && result.fileName && result.mimeType) {
         downloadBase64File(result.fileName, result.base64Data, result.mimeType);

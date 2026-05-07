@@ -64,6 +64,8 @@ function routePostAction_(action, body, payload) {
       return uploadFotoKegiatan_(body, payload);
     case "deleteFotoKegiatan":
       return deleteFotoKegiatan_(body, payload);
+    case "getKegiatanPdfData":
+      return getKegiatanPdfData_(body, payload);
     case "exportKegiatan":
       return exportKegiatan_(body, payload);
     default:

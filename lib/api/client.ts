@@ -7,6 +7,7 @@ import {
   FotoKegiatan,
   Kegiatan,
   KegiatanDetailResponse,
+  KegiatanPdfExportPayload,
   KegiatanPayload,
   RekapFilters,
   RekapKehadiranItem,
@@ -125,6 +126,8 @@ export const apiClient = {
     caption: string;
   }) => postRequest<FotoKegiatan>("uploadFotoKegiatan", payload),
   deleteFoto: (foto_id: string) => postRequest<boolean>("deleteFotoKegiatan", { foto_id }),
+  getKegiatanPdfData: (kegiatan_id: string) =>
+    postRequest<KegiatanPdfExportPayload>("getKegiatanPdfData", { kegiatan_id }),
   exportKegiatan: (kegiatan_id: string, format: "pdf" | "docx") =>
     postRequest<ExportFilePayload>("exportKegiatan", { kegiatan_id, format }),
   getRekapKehadiran: (filters: RekapFilters) =>
