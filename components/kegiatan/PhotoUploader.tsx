@@ -77,7 +77,7 @@ export function PhotoUploader({
       <div className="modal-header">
         <div>
           <h3>Dokumentasi Foto</h3>
-          <p className="muted">Foto disimpan ke Google Drive, sedangkan metadata disimpan ke sheet.</p>
+          <p className="muted">Simpan dokumentasi kegiatan agar laporan lebih lengkap dan mudah ditinjau.</p>
         </div>
       </div>
 
@@ -96,7 +96,7 @@ export function PhotoUploader({
             <div className="field full">
               <label>Upload Foto</label>
               <input className="input" disabled={uploading} onChange={handleChange} type="file" />
-              <span className="helper-text">Untuk MVP, upload dikirim sebagai base64 ke Apps Script.</span>
+              <span className="helper-text">Pilih foto yang paling mewakili jalannya kegiatan.</span>
             </div>
           </div>
         ) : null}
@@ -131,4 +131,3 @@ export function PhotoUploader({
     </div>
   );
 }
-

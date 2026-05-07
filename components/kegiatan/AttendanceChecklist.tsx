@@ -46,7 +46,7 @@ export function AttendanceChecklist({
       <div className="modal-header">
         <div>
           <h3>Daftar Hadir</h3>
-          <p className="muted">Checklist kehadiran disimpan per `kegiatan_id` dan `warga_id`.</p>
+          <p className="muted">Tandai warga yang hadir dan tambahkan catatan bila diperlukan.</p>
         </div>
         {canEdit ? (
           <button className="button primary" disabled={saving} onClick={() => onSave(items)} type="button">

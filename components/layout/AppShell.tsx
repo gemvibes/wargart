@@ -22,6 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
+          <span className="brand-eyebrow">Community Administration</span>
           <h1>{APP_NAME}</h1>
           <p>{APP_TAGLINE}</p>
         </div>
@@ -39,8 +40,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="sidebar-footer">
-          <strong>{user?.nama}</strong>
-          <p className="helper-text">Role: {user?.role === "superadmin" ? "Superadmin" : "Viewer"}</p>
+          <div className="sidebar-footer-copy">
+            <strong>{user?.nama}</strong>
+            <p className="helper-text">Role: {user?.role === "superadmin" ? "Superadmin" : "Viewer"}</p>
+          </div>
           <button className="button secondary" onClick={logout} type="button">
             Keluar
           </button>

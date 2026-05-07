@@ -8,11 +8,10 @@ export function StatCard({
   hint?: string;
 }) {
   return (
-    <div className="card">
-      <p className="muted">{label}</p>
-      <h3 style={{ marginBottom: 8 }}>{value}</h3>
-      {hint ? <p className="helper-text">{hint}</p> : null}
+    <div className="card stat-card">
+      <p className="stat-card-label">{label}</p>
+      <h3 className="stat-card-value">{value}</h3>
+      {hint ? <p className="stat-card-hint">{hint}</p> : null}
     </div>
   );
 }
-

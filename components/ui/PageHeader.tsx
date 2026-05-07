@@ -11,7 +11,7 @@ export function PageHeader({
 }) {
   return (
     <div className="page-header">
-      <div>
+      <div className="page-header-copy">
         <h2>{title}</h2>
         <p>{description}</p>
       </div>
@@ -19,4 +19,3 @@ export function PageHeader({
     </div>
   );
 }
-

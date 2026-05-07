@@ -174,7 +174,7 @@ export function WargaFormModal({
           {error ? <div className="error-state">{error}</div> : null}
 
           <div className="inline-between">
-            <span className="helper-text">Data ini akan disimpan ke sheet `warga`.</span>
+            <span className="helper-text">Periksa kembali data warga sebelum disimpan.</span>
             <button className="button primary" disabled={saving} type="submit">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
@@ -184,4 +184,3 @@ export function WargaFormModal({
     </div>
   );
 }
-

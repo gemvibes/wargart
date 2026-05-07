@@ -11,6 +11,7 @@ function LoginContent() {
   const { login, loading, user } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -41,15 +42,16 @@ function LoginContent() {
     <div className="login-screen">
       <div className="login-card">
         <section className="login-hero">
+          <span className="brand-eyebrow">Modern Community Administration</span>
           <h1>{APP_NAME}</h1>
           <p>{APP_TAGLINE}</p>
 
           <div className="quick-list" style={{ marginTop: 24 }}>
-            <div className="quick-list-item">
+            <div className="quick-list-item login-role-card">
               <strong>Superadmin</strong>
               <p className="helper-text">Kelola data warga, kegiatan, kehadiran, foto, dan export.</p>
             </div>
-            <div className="quick-list-item">
+            <div className="quick-list-item login-role-card">
               <strong>Viewer</strong>
               <p className="helper-text">Lihat data warga, kegiatan, detail kegiatan, dan rekap kehadiran.</p>
             </div>
@@ -57,15 +59,16 @@ function LoginContent() {
         </section>
 
         <section className="login-panel">
-          <div style={{ marginBottom: 20 }}>
+          <div className="login-panel-header">
             <h2 style={{ marginBottom: 6 }}>Masuk ke {APP_NAME}</h2>
-            <p className="muted">Gunakan akun yang sudah terdaftar di sheet `users`.</p>
+            <p className="muted">Gunakan username dan password yang telah diberikan oleh admin.</p>
           </div>
 
           <form className="section-stack" onSubmit={handleSubmit}>
             <div className="field">
               <label htmlFor="username">Username</label>
               <input
+                autoComplete="username"
                 className="input"
                 id="username"
                 onChange={(event) => setUsername(event.target.value)}
@@ -75,15 +78,29 @@ function LoginContent() {
             </div>
 
             <div className="field">
-              <label htmlFor="password">Password</label>
-              <input
-                className="input"
-                id="password"
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Masukkan password"
-                type="password"
-                value={password}
-              />
+              <div className="label-row">
+                <label htmlFor="password">Password</label>
+                <button
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                  aria-pressed={showPassword}
+                  className="password-toggle"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  type="button"
+                >
+                  {showPassword ? "Sembunyikan" : "Lihat"}
+                </button>
+              </div>
+              <div className="password-field">
+                <input
+                  autoComplete="current-password"
+                  className="input"
+                  id="password"
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Masukkan password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                />
+              </div>
             </div>
 
             {error ? <div className="error-state">{error}</div> : null}
@@ -91,6 +108,8 @@ function LoginContent() {
             <button className="button primary" disabled={loading} type="submit">
               {loading ? "Memproses..." : "Login"}
             </button>
+
+            <p className="login-support">Akun bermasalah? Hubungi admin RT.</p>
           </form>
         </section>
       </div>

@@ -302,7 +302,7 @@ export function KegiatanFormModal({
           {error ? <div className="error-state">{error}</div> : null}
 
           <div className="inline-between">
-            <span className="helper-text">Kegiatan baru otomatis menggunakan status Draft.</span>
+            <span className="helper-text">Pastikan jadwal, tempat, dan dokumentasi sudah sesuai.</span>
             <button className="button primary" disabled={saving} type="submit">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
