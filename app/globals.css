@@ -363,14 +363,22 @@ button {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(11, 30, 27, 0.52);
   display: grid;
   place-items: center;
   padding: 24px;
   z-index: 40;
+  background: transparent;
+  pointer-events: none;
+}
+
+.modal-backdrop:has(.modal-card) {
+  background: rgba(11, 30, 27, 0.52);
+  pointer-events: auto;
 }
 
 .modal-card {
+  position: relative;
+  z-index: 1;
   width: min(720px, 100%);
   max-height: 90vh;
   overflow: auto;
@@ -378,6 +386,7 @@ button {
   border-radius: 22px;
   padding: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
 }
 
 .modal-header,
@@ -539,4 +548,3 @@ button {
     grid-template-columns: 1fr;
   }
 }
-
