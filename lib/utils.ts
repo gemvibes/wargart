@@ -35,6 +35,45 @@ export function buildHariFromDate(dateString: string) {
   }).format(new Date(dateString));
 }
 
+export function formatTimeValue(value: string) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const withoutSuffix = raw.replace(/\s*wib$/i, "").trim();
+  const shortMatch = withoutSuffix.match(/^(\d{1,2})[:.](\d{2})$/);
+  if (shortMatch) {
+    return `${shortMatch[1].padStart(2, "0")}.${shortMatch[2]}`;
+  }
+
+  const date = new Date(withoutSuffix);
+  if (!Number.isNaN(date.getTime()) && /T\d{2}:\d{2}/.test(withoutSuffix)) {
+    return new Intl.DateTimeFormat("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Jakarta"
+    })
+      .format(date)
+      .replace(":", ".");
+  }
+
+  const genericTime = withoutSuffix.match(/(\d{2})[:.](\d{2})(?::\d{2})?/);
+  if (genericTime) {
+    return `${genericTime[1]}.${genericTime[2]}`;
+  }
+
+  return withoutSuffix.replace(/:/g, ".");
+}
+
+export function formatTimeRange(start: string, end: string) {
+  const startValue = formatTimeValue(start);
+  const endValue = formatTimeValue(end);
+
+  if (!startValue && !endValue) return "-";
+  if (startValue && endValue) return `${startValue} - ${endValue} WIB`;
+  return `${startValue || endValue} WIB`;
+}
+
 export function getAttendanceCategory(value: number): KategoriKehadiran {
   if (value >= 80) return "Rutin Hadir";
   if (value >= 50) return "Cukup Aktif";

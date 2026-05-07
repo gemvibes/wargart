@@ -19,13 +19,19 @@ function getSheet(name) {
 function readSheetAsObjects(sheetName) {
   const sheet = getSheet(sheetName);
   const values = sheet.getDataRange().getValues();
+  const displayValues = sheet.getDataRange().getDisplayValues();
   if (values.length <= 1) return [];
 
   const headers = values[0];
-  return values.slice(1).map(function (row) {
+  return values.slice(1).map(function (row, rowIndex) {
     const item = {};
     headers.forEach(function (header, index) {
-      item[String(header)] = row[index];
+      const key = String(header);
+      if (key === "waktu_mulai" || key === "waktu_selesai") {
+        item[key] = displayValues[rowIndex + 1][index];
+        return;
+      }
+      item[key] = row[index];
     });
     return item;
   });

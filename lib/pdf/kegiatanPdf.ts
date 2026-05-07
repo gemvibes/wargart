@@ -1,6 +1,6 @@
 import { PDFDocument, PDFFont, PDFImage, PDFPage, StandardFonts, rgb } from "pdf-lib";
 import { KegiatanPdfExportPayload } from "@/lib/types";
-import { base64ToUint8Array, formatDate } from "@/lib/utils";
+import { base64ToUint8Array, formatDate, formatTimeRange } from "@/lib/utils";
 
 const A4_PORTRAIT: [number, number] = [595.28, 841.89];
 const PAGE_MARGIN = 42;
@@ -74,28 +74,6 @@ function ensureSpace(pdfDoc: PDFDocument, state: CursorState, minimumHeight: num
     page,
     y: page.getHeight() - PAGE_MARGIN
   };
-}
-
-function formatTimeValue(value: string) {
-  const raw = String(value || "").trim();
-  if (!raw) return "";
-
-  const withoutSuffix = raw.replace(/\s*wib$/i, "").trim();
-  const match = withoutSuffix.match(/^(\d{1,2})[:.](\d{2})$/);
-  if (match) {
-    return `${match[1].padStart(2, "0")}.${match[2]}`;
-  }
-
-  return withoutSuffix.replace(/:/g, ".");
-}
-
-function formatTimeRange(start: string, end: string) {
-  const startValue = formatTimeValue(start);
-  const endValue = formatTimeValue(end);
-
-  if (!startValue && !endValue) return "-";
-  if (startValue && endValue) return `${startValue} - ${endValue} WIB`;
-  return `${startValue || endValue} WIB`;
 }
 
 function drawParagraph(
@@ -429,7 +407,7 @@ function drawPhotoCard(
   const imageWidth = image.width * imageScale;
   const imageHeight = image.height * imageScale;
   const imageX = x + (width - imageWidth) / 2;
-  const imageY = y + (height - imageHeight) / 2;
+  const imageY = y + height - imageHeight;
 
   page.drawImage(image, {
     x: imageX,
@@ -467,9 +445,9 @@ async function addPhotoGridPages(
     });
 
     const gridTop = pageHeight - PAGE_MARGIN - 28;
-    const gridBottom = PAGE_MARGIN + 8;
+    const gridBottom = PAGE_MARGIN + 4;
     const gridHeight = gridTop - gridBottom;
-    const gap = 8;
+    const gap = 4;
     const cellWidth = (pageWidth - PAGE_MARGIN * 2 - gap) / 2;
     const cellHeight = (gridHeight - gap) / 2;
 

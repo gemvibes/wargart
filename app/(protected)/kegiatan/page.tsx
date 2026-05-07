@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { JENIS_KEGIATAN_OPTIONS } from "@/lib/constants";
 import { apiClient } from "@/lib/api/client";
 import { Kegiatan, KegiatanPayload, KegiatanPhotoDraft } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatTimeRange } from "@/lib/utils";
 
 export default function KegiatanPage() {
   const [kegiatan, setKegiatan] = useState<Kegiatan[]>([]);
@@ -184,7 +184,7 @@ export default function KegiatanPage() {
                     <td>
                       <strong>{item.nama_kegiatan}</strong>
                       <div className="helper-text">
-                        {item.hari} • {item.waktu_mulai} - {item.waktu_selesai}
+                        {item.hari} | {formatTimeRange(item.waktu_mulai, item.waktu_selesai)}
                       </div>
                     </td>
                     <td>{item.jenis_kegiatan}</td>

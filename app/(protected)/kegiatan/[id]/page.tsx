@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { apiClient } from "@/lib/api/client";
 import { downloadKegiatanPdf } from "@/lib/pdf/kegiatanPdf";
 import { AttendanceItem, Kegiatan, KegiatanPayload, KegiatanDetailResponse } from "@/lib/types";
-import { downloadBase64File, formatDate } from "@/lib/utils";
+import { downloadBase64File, formatDate, formatTimeRange } from "@/lib/utils";
 
 export default function KegiatanDetailPage() {
   const params = useParams<{ id: string }>();
@@ -167,9 +167,7 @@ export default function KegiatanDetailPage() {
             </div>
             <div className="quick-list-item">
               <strong>Waktu</strong>
-              <p className="helper-text">
-                {kegiatan.waktu_mulai} - {kegiatan.waktu_selesai}
-              </p>
+              <p className="helper-text">{formatTimeRange(kegiatan.waktu_mulai, kegiatan.waktu_selesai)}</p>
             </div>
             <div className="quick-list-item">
               <strong>Tempat</strong>
