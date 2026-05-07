@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { DAWIS_OPTIONS } from "@/lib/constants";
 import { AttendanceItem } from "@/lib/types";
 
 export function AttendanceChecklist({
@@ -15,13 +16,27 @@ export function AttendanceChecklist({
   saving: boolean;
 }) {
   const [items, setItems] = useState<AttendanceItem[]>(initialItems);
+  const [search, setSearch] = useState("");
+  const [dawisFilter, setDawisFilter] = useState("");
 
   useEffect(() => {
     setItems(initialItems);
   }, [initialItems]);
 
-  function updateItem(index: number, patch: Partial<AttendanceItem>) {
-    setItems((prev) => prev.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)));
+  const filteredItems = useMemo(
+    () =>
+      items.filter((item) => {
+        const matchSearch = !search || item.nama.toLowerCase().includes(search.toLowerCase());
+        const matchDawis = !dawisFilter || item.dawis === dawisFilter;
+        return matchSearch && matchDawis;
+      }),
+    [dawisFilter, items, search]
+  );
+
+  function updateItem(wargaId: string, patch: Partial<AttendanceItem>) {
+    setItems((prev) =>
+      prev.map((item) => (item.warga_id === wargaId ? { ...item, ...patch } : item))
+    );
   }
 
   return (
@@ -38,17 +53,45 @@ export function AttendanceChecklist({
         ) : null}
       </div>
 
+      <div className="toolbar" style={{ marginBottom: 18 }}>
+        <div className="field">
+          <label>Cari Nama Warga</label>
+          <input
+            className="input"
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Cari nama warga"
+            value={search}
+          />
+        </div>
+
+        <div className="field">
+          <label>Filter Dawis</label>
+          <select
+            className="select"
+            onChange={(event) => setDawisFilter(event.target.value)}
+            value={dawisFilter}
+          >
+            <option value="">Semua Dawis</option>
+            {DAWIS_OPTIONS.map((item) => (
+              <option key={item} value={item}>
+                Dawis {item}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {items.length === 0 ? (
         <p className="helper-text">Belum ada warga aktif yang bisa ditampilkan.</p>
+      ) : filteredItems.length === 0 ? (
+        <p className="helper-text">Tidak ada warga yang cocok dengan pencarian atau filter Dawis.</p>
       ) : (
         <div className="attendance-list">
-          {items.map((item, index) => (
+          {filteredItems.map((item) => (
             <div className="attendance-row" key={item.warga_id}>
               <div>
                 <strong>{item.nama}</strong>
-                <div className="helper-text">
-                  Rumah {item.nomor_rumah} • Dawis {item.dawis}
-                </div>
+                <div className="helper-text">Rumah {item.nomor_rumah} • Dawis {item.dawis}</div>
               </div>
 
               <label className="list-row" style={{ justifyContent: "flex-start" }}>
@@ -56,7 +99,9 @@ export function AttendanceChecklist({
                   checked={item.status_hadir === "Hadir"}
                   disabled={!canEdit}
                   onChange={(event) =>
-                    updateItem(index, { status_hadir: event.target.checked ? "Hadir" : "Tidak Hadir" })
+                    updateItem(item.warga_id, {
+                      status_hadir: event.target.checked ? "Hadir" : "Tidak Hadir"
+                    })
                   }
                   type="checkbox"
                 />
@@ -70,7 +115,7 @@ export function AttendanceChecklist({
               <input
                 className="input"
                 disabled={!canEdit}
-                onChange={(event) => updateItem(index, { catatan: event.target.value })}
+                onChange={(event) => updateItem(item.warga_id, { catatan: event.target.value })}
                 placeholder="Catatan"
                 value={item.catatan}
               />
@@ -81,4 +126,3 @@ export function AttendanceChecklist({
     </div>
   );
 }
-

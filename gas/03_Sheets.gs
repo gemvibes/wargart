@@ -41,6 +41,29 @@ function appendRow(sheetName, objectData) {
   return objectData;
 }
 
+function replaceSheetRows_(sheetName, rows) {
+  const sheet = getSheet(sheetName);
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const lastRow = sheet.getLastRow();
+
+  if (lastRow > 1) {
+    sheet.getRange(2, 1, lastRow - 1, headers.length).clearContent();
+  }
+
+  if (!rows.length) {
+    return true;
+  }
+
+  const values = rows.map(function (objectData) {
+    return headers.map(function (header) {
+      return objectData[String(header)] !== undefined ? objectData[String(header)] : "";
+    });
+  });
+
+  sheet.getRange(2, 1, values.length, headers.length).setValues(values);
+  return true;
+}
+
 function updateRowById(sheetName, idColumn, idValue, objectData) {
   const sheet = getSheet(sheetName);
   const values = sheet.getDataRange().getValues();

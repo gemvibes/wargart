@@ -41,21 +41,33 @@ function saveKehadiran_(body, payload) {
     throw new Error("Data daftar hadir tidak boleh kosong.");
   }
 
-  deleteRowsByColumnValue_(CONFIG.SHEETS.KEHADIRAN, "kegiatan_id", kegiatanId);
+  const existingRows = readSheetAsObjects(CONFIG.SHEETS.KEHADIRAN);
+  const preservedRows = existingRows.filter(function (item) {
+    return String(item.kegiatan_id) !== kegiatanId;
+  });
 
-  attendance.forEach(function (item) {
-    appendRow(CONFIG.SHEETS.KEHADIRAN, {
-      hadir_id: generateId("H", CONFIG.SHEETS.KEHADIRAN, "hadir_id"),
+  var nextNumber = existingRows.reduce(function (maxValue, item) {
+    const currentId = String(item.hadir_id || "");
+    const matched = currentId.match(/(\d+)$/);
+    const numeric = matched ? Number(matched[1]) : 0;
+    return numeric > maxValue ? numeric : maxValue;
+  }, 0);
+
+  const nextRows = attendance.map(function (item) {
+    nextNumber += 1;
+    return {
+      hadir_id: "H-" + ("0000" + nextNumber).slice(-4),
       old_supabase_id: "",
       kegiatan_id: kegiatanId,
       warga_id: getRequiredValue_(item.warga_id, "warga_id pada daftar hadir wajib diisi."),
       status_hadir: sanitizeText_(item.status_hadir) || "Tidak Hadir",
       catatan: sanitizeText_(item.catatan),
       created_at: nowIso_()
-    });
+    };
   });
+
+  replaceSheetRows_(CONFIG.SHEETS.KEHADIRAN, preservedRows.concat(nextRows));
 
   logAction(user.user_id, "save_kehadiran", kegiatanId);
   return true;
 }
-
