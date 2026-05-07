@@ -26,8 +26,10 @@ export function AttendanceChecklist({
   const filteredItems = useMemo(
     () =>
       items.filter((item) => {
-        const matchSearch = !search || item.nama.toLowerCase().includes(search.toLowerCase());
-        const matchDawis = !dawisFilter || item.dawis === dawisFilter;
+        const normalizedName = String(item.nama || "").toLowerCase();
+        const normalizedDawis = String(item.dawis || "").trim();
+        const matchSearch = !search || normalizedName.includes(search.toLowerCase());
+        const matchDawis = !dawisFilter || normalizedDawis === dawisFilter;
         return matchSearch && matchDawis;
       }),
     [dawisFilter, items, search]
