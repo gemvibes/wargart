@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <aside className="sidebar">
         <div className="brand">
           <h1>{APP_NAME}</h1>
-          <p>Administrasi RT 03 / RW 03 Purwokerto Lor</p>
+          <p>{APP_TAGLINE}</p>
         </div>
 
         <nav className="nav-list">
@@ -51,4 +51,3 @@ export function AppShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
-

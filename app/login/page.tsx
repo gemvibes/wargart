@@ -3,6 +3,7 @@
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 
 function LoginContent() {
   const router = useRouter();
@@ -40,11 +41,8 @@ function LoginContent() {
     <div className="login-screen">
       <div className="login-card">
         <section className="login-hero">
-          <h1>WargaRT</h1>
-          <p>
-            Aplikasi administrasi warga untuk membantu sekretaris RT mengelola data warga,
-            kegiatan, daftar hadir, dokumentasi, dan laporan dengan tampilan yang sederhana.
-          </p>
+          <h1>{APP_NAME}</h1>
+          <p>{APP_TAGLINE}</p>
 
           <div className="quick-list" style={{ marginTop: 24 }}>
             <div className="quick-list-item">
@@ -60,7 +58,7 @@ function LoginContent() {
 
         <section className="login-panel">
           <div style={{ marginBottom: 20 }}>
-            <h2 style={{ marginBottom: 6 }}>Masuk ke aplikasi</h2>
+            <h2 style={{ marginBottom: 6 }}>Masuk ke {APP_NAME}</h2>
             <p className="muted">Gunakan akun yang sudah terdaftar di sheet `users`.</p>
           </div>
 
