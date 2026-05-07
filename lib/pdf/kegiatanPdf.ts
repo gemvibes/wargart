@@ -434,27 +434,29 @@ async function addPhotoGridPages(
     const page = pdfDoc.addPage(A4_PORTRAIT);
     const pageWidth = page.getWidth();
     const pageHeight = page.getHeight();
-    const title = pageIndex === 0 ? "Dokumentasi Foto" : `Dokumentasi Foto (${pageIndex + 1})`;
+    const title =
+      pageIndex === 0
+        ? "Lampiran Dokumentasi Kegiatan"
+        : `Lampiran Dokumentasi Kegiatan (${pageIndex + 1})`;
+    const photoMargin = 22;
 
     page.drawText(title, {
-      x: PAGE_MARGIN,
-      y: pageHeight - PAGE_MARGIN,
+      x: photoMargin,
+      y: pageHeight - photoMargin,
       size: 13,
       font: boldFont,
       color: TEXT_COLOR
     });
 
-    const gridTop = pageHeight - PAGE_MARGIN - 28;
-    const gridBottom = PAGE_MARGIN + 4;
-    const gridHeight = gridTop - gridBottom;
-    const gap = 4;
-    const cellWidth = (pageWidth - PAGE_MARGIN * 2 - gap) / 2;
-    const cellHeight = (gridHeight - gap) / 2;
+    const gap = 2;
+    const cellWidth = (pageWidth - photoMargin * 2 - gap) / 2;
+    const cellHeight = Math.round(cellWidth * 0.64);
+    const gridTop = pageHeight - photoMargin - 20;
 
     pagePhotos.forEach((photo, index) => {
       const column = index % 2;
       const row = Math.floor(index / 2);
-      const x = PAGE_MARGIN + column * (cellWidth + gap);
+      const x = photoMargin + column * (cellWidth + gap);
       const topY = gridTop - row * (cellHeight + gap);
       const y = topY - cellHeight;
 
