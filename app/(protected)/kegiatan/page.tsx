@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 import { KegiatanFormModal } from "@/components/kegiatan/KegiatanFormModal";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -22,6 +22,7 @@ export default function KegiatanPage() {
   const [jenis, setJenis] = useState("");
   const [bulan, setBulan] = useState("");
   const [tahun, setTahun] = useState("");
+  const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
   const [selected, setSelected] = useState<Kegiatan | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -91,6 +92,9 @@ export default function KegiatanPage() {
       setError(deleteError instanceof Error ? deleteError.message : "Gagal menghapus kegiatan.");
     }
   }
+
+  const listHeight = visibleCount === 10 ? 680 : 1160;
+  const listStyle = { maxHeight: listHeight } as CSSProperties;
 
   return (
     <div className="section-stack">
@@ -166,66 +170,138 @@ export default function KegiatanPage() {
         ) : null}
 
         {!loading && !error && kegiatan.length > 0 ? (
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Nama Kegiatan</th>
-                  <th>Jenis</th>
-                  <th>Tanggal</th>
-                  <th>Tempat</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {kegiatan.map((item) => (
-                  <tr key={item.kegiatan_id}>
-                    <td>
-                      <strong>{item.nama_kegiatan}</strong>
-                      <div className="helper-text">
-                        {item.hari} | {formatTimeRange(item.waktu_mulai, item.waktu_selesai)}
-                      </div>
-                    </td>
-                    <td>{item.jenis_kegiatan}</td>
-                    <td>{formatDate(item.tanggal)}</td>
-                    <td>{item.tempat}</td>
-                    <td>
-                      <span className={`badge ${item.status_kegiatan === "Final" ? "green" : "yellow"}`}>
-                        {item.status_kegiatan}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="actions-row">
-                        <Link className="button ghost" href={`/kegiatan/${item.kegiatan_id}`}>
-                          Detail
-                        </Link>
-                        <RoleGuard allow="superadmin">
-                          <button
-                            className="button secondary"
-                            onClick={() => {
-                              setSelected(item);
-                              setModalOpen(true);
-                            }}
-                            type="button"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="button danger"
-                            onClick={() => handleDelete(item.kegiatan_id)}
-                            type="button"
-                          >
-                            Hapus
-                          </button>
-                        </RoleGuard>
-                      </div>
-                    </td>
+          <>
+            <div className="list-toolbar">
+              <p className="helper-text">
+                Total {kegiatan.length} kegiatan. Gunakan gulir untuk melihat daftar lainnya.
+              </p>
+              <div className="list-size-control">
+                <label htmlFor="kegiatan-visible-count">Tampilkan</label>
+                <select
+                  className="select"
+                  id="kegiatan-visible-count"
+                  onChange={(event) => setVisibleCount(Number(event.target.value) as 10 | 20)}
+                  value={visibleCount}
+                >
+                  <option value="10">10 data</option>
+                  <option value="20">20 data</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="desktop-only scroll-surface table-wrap" style={listStyle}>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Nama Kegiatan</th>
+                    <th>Jenis</th>
+                    <th>Tanggal</th>
+                    <th>Tempat</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {kegiatan.map((item) => (
+                    <tr key={item.kegiatan_id}>
+                      <td>
+                        <strong>{item.nama_kegiatan}</strong>
+                        <div className="helper-text">
+                          {item.hari} | {formatTimeRange(item.waktu_mulai, item.waktu_selesai)}
+                        </div>
+                      </td>
+                      <td>{item.jenis_kegiatan}</td>
+                      <td>{formatDate(item.tanggal)}</td>
+                      <td>{item.tempat}</td>
+                      <td>
+                        <span className={`badge ${item.status_kegiatan === "Final" ? "green" : "yellow"}`}>
+                          {item.status_kegiatan}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="actions-row">
+                          <Link className="button ghost" href={`/kegiatan/${item.kegiatan_id}`}>
+                            Detail
+                          </Link>
+                          <RoleGuard allow="superadmin">
+                            <button
+                              className="button secondary"
+                              onClick={() => {
+                                setSelected(item);
+                                setModalOpen(true);
+                              }}
+                              type="button"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="button danger"
+                              onClick={() => handleDelete(item.kegiatan_id)}
+                              type="button"
+                            >
+                              Hapus
+                            </button>
+                          </RoleGuard>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mobile-only mobile-card-list scroll-surface" style={listStyle}>
+              {kegiatan.map((item) => (
+                <article className="mobile-data-card" key={item.kegiatan_id}>
+                  <div className="mobile-data-header">
+                    <div>
+                      <strong>{item.nama_kegiatan}</strong>
+                      <p className="helper-text">{item.jenis_kegiatan}</p>
+                    </div>
+                    <span className={`badge ${item.status_kegiatan === "Final" ? "green" : "yellow"}`}>
+                      {item.status_kegiatan}
+                    </span>
+                  </div>
+
+                  <div className="mobile-data-body">
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Tanggal</span>
+                      <span>{formatDate(item.tanggal)}</span>
+                    </div>
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Waktu</span>
+                      <span>{formatTimeRange(item.waktu_mulai, item.waktu_selesai)}</span>
+                    </div>
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Tempat</span>
+                      <span>{item.tempat}</span>
+                    </div>
+                  </div>
+
+                  <div className="mobile-data-actions">
+                    <Link className="button ghost" href={`/kegiatan/${item.kegiatan_id}`}>
+                      Detail
+                    </Link>
+                    <RoleGuard allow="superadmin">
+                      <button
+                        className="button secondary"
+                        onClick={() => {
+                          setSelected(item);
+                          setModalOpen(true);
+                        }}
+                        type="button"
+                      >
+                        Edit
+                      </button>
+                      <button className="button danger" onClick={() => handleDelete(item.kegiatan_id)} type="button">
+                        Hapus
+                      </button>
+                    </RoleGuard>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
         ) : null}
       </section>
 

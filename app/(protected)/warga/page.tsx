@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -20,6 +20,7 @@ export default function WargaPage() {
   const [search, setSearch] = useState("");
   const [dawis, setDawis] = useState("");
   const [statusTinggal, setStatusTinggal] = useState("");
+  const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
   const [selected, setSelected] = useState<Warga | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -75,6 +76,8 @@ export default function WargaPage() {
   }
 
   const activeCount = useMemo(() => warga.filter((item) => item.status === "Aktif").length, [warga]);
+  const listHeight = visibleCount === 10 ? 680 : 1160;
+  const listStyle = { maxHeight: listHeight } as CSSProperties;
 
   return (
     <div className="section-stack">
@@ -159,63 +162,138 @@ export default function WargaPage() {
         ) : null}
 
         {!loading && !error && warga.length > 0 ? (
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Nama</th>
-                  <th>Nomor Rumah</th>
-                  <th>Dawis</th>
-                  <th>Status Tinggal</th>
-                  <th>Status</th>
-                  <th>Jumlah KK</th>
-                  <th>Diperbarui</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {warga.map((item) => (
-                  <tr key={item.warga_id}>
-                    <td>
-                      <strong>{item.nama}</strong>
-                      {item.catatan ? <div className="helper-text">{item.catatan}</div> : null}
-                    </td>
-                    <td>{item.nomor_rumah}</td>
-                    <td>Dawis {item.dawis}</td>
-                    <td>{item.status_tinggal}</td>
-                    <td>
-                      <span className={`badge ${item.status === "Aktif" ? "green" : "yellow"}`}>{item.status}</span>
-                    </td>
-                    <td>{item.jumlah_anggota_kk}</td>
-                    <td>{formatDateTime(item.updated_at || item.created_at)}</td>
-                    <td>
-                      <RoleGuard allow="superadmin" fallback={<span className="helper-text">Lihat saja</span>}>
-                        <div className="actions-row">
-                          <button
-                            className="button secondary"
-                            onClick={() => {
-                              setSelected(item);
-                              setModalOpen(true);
-                            }}
-                            type="button"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="button danger"
-                            onClick={() => handleDelete(item.warga_id)}
-                            type="button"
-                          >
-                            Hapus
-                          </button>
-                        </div>
-                      </RoleGuard>
-                    </td>
+          <>
+            <div className="list-toolbar">
+              <p className="helper-text">
+                Total {warga.length} data warga. Gunakan gulir untuk melihat daftar lainnya.
+              </p>
+              <div className="list-size-control">
+                <label htmlFor="warga-visible-count">Tampilkan</label>
+                <select
+                  className="select"
+                  id="warga-visible-count"
+                  onChange={(event) => setVisibleCount(Number(event.target.value) as 10 | 20)}
+                  value={visibleCount}
+                >
+                  <option value="10">10 data</option>
+                  <option value="20">20 data</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="desktop-only scroll-surface table-wrap" style={listStyle}>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Nomor Rumah</th>
+                    <th>Dawis</th>
+                    <th>Status Tinggal</th>
+                    <th>Status</th>
+                    <th>Jumlah KK</th>
+                    <th>Diperbarui</th>
+                    <th>Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {warga.map((item) => (
+                    <tr key={item.warga_id}>
+                      <td>
+                        <strong>{item.nama}</strong>
+                        {item.catatan ? <div className="helper-text">{item.catatan}</div> : null}
+                      </td>
+                      <td>{item.nomor_rumah}</td>
+                      <td>Dawis {item.dawis}</td>
+                      <td>{item.status_tinggal}</td>
+                      <td>
+                        <span className={`badge ${item.status === "Aktif" ? "green" : "yellow"}`}>{item.status}</span>
+                      </td>
+                      <td>{item.jumlah_anggota_kk}</td>
+                      <td>{formatDateTime(item.updated_at || item.created_at)}</td>
+                      <td>
+                        <RoleGuard allow="superadmin" fallback={<span className="helper-text">Lihat saja</span>}>
+                          <div className="actions-row">
+                            <button
+                              className="button secondary"
+                              onClick={() => {
+                                setSelected(item);
+                                setModalOpen(true);
+                              }}
+                              type="button"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="button danger"
+                              onClick={() => handleDelete(item.warga_id)}
+                              type="button"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </RoleGuard>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mobile-only mobile-card-list scroll-surface" style={listStyle}>
+              {warga.map((item) => (
+                <article className="mobile-data-card" key={item.warga_id}>
+                  <div className="mobile-data-header">
+                    <div>
+                      <strong>{item.nama}</strong>
+                      <p className="helper-text">{item.catatan || "Data warga RT"}</p>
+                    </div>
+                    <span className={`badge ${item.status === "Aktif" ? "green" : "yellow"}`}>{item.status}</span>
+                  </div>
+
+                  <div className="mobile-data-body">
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Nomor Rumah</span>
+                      <span>{item.nomor_rumah || "-"}</span>
+                    </div>
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Dawis</span>
+                      <span>Dawis {item.dawis || "-"}</span>
+                    </div>
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Status Tinggal</span>
+                      <span>{item.status_tinggal || "-"}</span>
+                    </div>
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Jumlah KK</span>
+                      <span>{item.jumlah_anggota_kk}</span>
+                    </div>
+                    <div className="mobile-data-row">
+                      <span className="mobile-data-label">Diperbarui</span>
+                      <span>{formatDateTime(item.updated_at || item.created_at)}</span>
+                    </div>
+                  </div>
+
+                  <RoleGuard allow="superadmin" fallback={<span className="helper-text">Mode lihat saja</span>}>
+                    <div className="mobile-data-actions">
+                      <button
+                        className="button secondary"
+                        onClick={() => {
+                          setSelected(item);
+                          setModalOpen(true);
+                        }}
+                        type="button"
+                      >
+                        Edit
+                      </button>
+                      <button className="button danger" onClick={() => handleDelete(item.warga_id)} type="button">
+                        Hapus
+                      </button>
+                    </div>
+                  </RoleGuard>
+                </article>
+              ))}
+            </div>
+          </>
         ) : null}
       </section>
 
@@ -233,4 +311,3 @@ export default function WargaPage() {
     </div>
   );
 }
-

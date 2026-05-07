@@ -27,6 +27,7 @@ const initialFilters: RekapFilters = {
 export default function RekapKehadiranPage() {
   const [filters, setFilters] = useState<RekapFilters>(initialFilters);
   const [rows, setRows] = useState<RekapKehadiranItem[]>([]);
+  const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -112,7 +113,28 @@ export default function RekapKehadiranPage() {
           title="Rekap belum tersedia"
         />
       ) : null}
-      {!loading && !error && rows.length > 0 ? <AttendanceSummaryTable rows={rows} /> : null}
+      {!loading && !error && rows.length > 0 ? (
+        <>
+          <div className="list-toolbar">
+            <p className="helper-text">
+              Total {rows.length} baris rekap. Gunakan gulir untuk melihat data lainnya.
+            </p>
+            <div className="list-size-control">
+              <label htmlFor="rekap-visible-count">Tampilkan</label>
+              <select
+                className="select"
+                id="rekap-visible-count"
+                onChange={(event) => setVisibleCount(Number(event.target.value) as 10 | 20)}
+                value={visibleCount}
+              >
+                <option value="10">10 data</option>
+                <option value="20">20 data</option>
+              </select>
+            </div>
+          </div>
+          <AttendanceSummaryTable rows={rows} visibleCount={visibleCount} />
+        </>
+      ) : null}
     </div>
   );
 }

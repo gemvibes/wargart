@@ -8,11 +8,46 @@ import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/warga", label: "Data Warga" },
-  { href: "/kegiatan", label: "Daftar Kegiatan" },
-  { href: "/rekap-kehadiran", label: "Rekap Kehadiran" }
-];
+  { href: "/dashboard", label: "Dashboard", shortLabel: "Beranda", icon: "dashboard" },
+  { href: "/warga", label: "Data Warga", shortLabel: "Warga", icon: "warga" },
+  { href: "/kegiatan", label: "Daftar Kegiatan", shortLabel: "Kegiatan", icon: "kegiatan" },
+  { href: "/rekap-kehadiran", label: "Rekap Kehadiran", shortLabel: "Rekap", icon: "rekap" }
+] as const;
+
+function NavIcon({ icon }: { icon: "dashboard" | "warga" | "kegiatan" | "rekap" }) {
+  switch (icon) {
+    case "dashboard":
+      return (
+        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+          <path d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z" fill="currentColor" />
+        </svg>
+      );
+    case "warga":
+      return (
+        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+          <path
+            d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM5 20a7 7 0 1 1 14 0H5Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "kegiatan":
+      return (
+        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+          <path
+            d="M7 3v2H5a2 2 0 0 0-2 2v2h18V7a2 2 0 0 0-2-2h-2V3h-2v2H9V3H7Zm14 8H3v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "rekap":
+      return (
+        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+          <path d="M5 19V9h3v10H5Zm5 0V5h4v14h-4Zm6 0v-7h3v7h-3Z" fill="currentColor" />
+        </svg>
+      );
+  }
+}
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -34,7 +69,13 @@ export function AppShell({ children }: { children: ReactNode }) {
               className={cn("nav-link", pathname.startsWith(item.href) && "active")}
               href={item.href}
             >
-              <span>{item.label}</span>
+              <span className="nav-icon" aria-hidden="true">
+                <NavIcon icon={item.icon} />
+              </span>
+              <span className="nav-label">
+                <span className="nav-label-full">{item.label}</span>
+                <span className="nav-label-short">{item.shortLabel}</span>
+              </span>
             </Link>
           ))}
         </nav>
