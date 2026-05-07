@@ -36,10 +36,9 @@ function saveKehadiran_(body, payload) {
   requireSuperAdmin(user);
 
   const kegiatanId = getRequiredValue_(payload.kegiatan_id, "kegiatan_id wajib diisi.");
-  const attendance = payload.attendance || [];
-  if (!attendance.length) {
-    throw new Error("Data daftar hadir tidak boleh kosong.");
-  }
+  const attendance = (payload.attendance || []).filter(function (item) {
+    return sanitizeText_(item.status_hadir) === "Hadir";
+  });
 
   const existingRows = readSheetAsObjects(CONFIG.SHEETS.KEHADIRAN);
   const preservedRows = existingRows.filter(function (item) {
@@ -60,7 +59,7 @@ function saveKehadiran_(body, payload) {
       old_supabase_id: "",
       kegiatan_id: kegiatanId,
       warga_id: getRequiredValue_(item.warga_id, "warga_id pada daftar hadir wajib diisi."),
-      status_hadir: sanitizeText_(item.status_hadir) || "Tidak Hadir",
+      status_hadir: "Hadir",
       catatan: sanitizeText_(item.catatan),
       created_at: nowIso_()
     };

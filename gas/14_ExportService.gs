@@ -30,8 +30,11 @@ function exportKegiatan_(body, payload) {
   try {
     const doc = DocumentApp.openById(copiedFileId);
     const bodyDoc = doc.getBody();
+    const hadirOnly = attendance.filter(function (item) {
+      return String(item.status_hadir) === "Hadir";
+    });
 
-    const daftarHadirText = attendance
+    const daftarHadirText = hadirOnly
       .map(function (item, index) {
         return (
           index +
@@ -62,7 +65,7 @@ function exportKegiatan_(body, payload) {
       "{{HARI_TANGGAL}}": kegiatan.hari + ", " + formatDateIndo_(kegiatan.tanggal),
       "{{WAKTU}}": kegiatan.waktu_mulai + " - " + kegiatan.waktu_selesai,
       "{{TEMPAT}}": kegiatan.tempat,
-      "{{DAFTAR_HADIR}}": daftarHadirText || "Belum ada data kehadiran.",
+      "{{DAFTAR_HADIR}}": daftarHadirText || "Belum ada warga yang ditandai hadir.",
       "{{LAPORAN}}": kegiatan.laporan || "Belum ada laporan kegiatan.",
       "{{DOKUMENTASI}}": dokumentasiText,
       "{{TANGGAL_CETAK}}": formatDateIndo_(nowIso_()),
@@ -79,7 +82,17 @@ function exportKegiatan_(body, payload) {
       bodyDoc.appendParagraph("Lampiran Dokumentasi").setHeading(DocumentApp.ParagraphHeading.HEADING2);
       photos.forEach(function (photo) {
         const imageBlob = DriveApp.getFileById(photo.file_id).getBlob();
-        bodyDoc.appendImage(imageBlob).setWidth(320);
+        const image = bodyDoc.appendImage(imageBlob);
+        const width = image.getWidth();
+        const height = image.getHeight();
+        if (!width || !height) {
+          bodyDoc.appendParagraph(photo.caption || photo.file_name);
+          return;
+        }
+        const maxWidth = 420;
+        const maxHeight = 520;
+        const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+        image.setWidth(Math.round(width * scale)).setHeight(Math.round(height * scale));
         bodyDoc.appendParagraph(photo.caption || photo.file_name);
       });
     }
