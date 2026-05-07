@@ -84,6 +84,13 @@ export interface KegiatanPayload {
   status_kegiatan: StatusKegiatan;
 }
 
+export interface KegiatanPhotoDraft {
+  file_name: string;
+  mime_type: string;
+  base64_data: string;
+  caption: string;
+}
+
 export interface FotoKegiatan {
   foto_id: string;
   kegiatan_id: string;
@@ -137,4 +144,3 @@ export interface RekapFilters {
   sort_by: string;
   sort_order: "asc" | "desc";
 }
-

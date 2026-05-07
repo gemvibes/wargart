@@ -10,7 +10,7 @@ import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { JENIS_KEGIATAN_OPTIONS } from "@/lib/constants";
 import { apiClient } from "@/lib/api/client";
-import { Kegiatan, KegiatanPayload } from "@/lib/types";
+import { Kegiatan, KegiatanPayload, KegiatanPhotoDraft } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function KegiatanPage() {
@@ -47,13 +47,29 @@ export default function KegiatanPage() {
     loadKegiatan();
   }, [search, jenis, bulan, tahun]);
 
-  async function handleSave(payload: KegiatanPayload) {
+  async function handleSave(payload: KegiatanPayload, photos: KegiatanPhotoDraft[]) {
     setSaving(true);
     try {
       if (selected) {
         await apiClient.updateKegiatan(selected.kegiatan_id, payload);
       } else {
-        await apiClient.createKegiatan(payload);
+        const created = await apiClient.createKegiatan(payload);
+        try {
+          await Promise.all(
+            photos.map((photo) =>
+              apiClient.uploadFoto({
+                kegiatan_id: created.kegiatan_id,
+                ...photo
+              })
+            )
+          );
+        } catch (uploadError) {
+          setError(
+            uploadError instanceof Error
+              ? `Kegiatan berhasil dibuat, tetapi upload foto belum tuntas: ${uploadError.message}`
+              : "Kegiatan berhasil dibuat, tetapi ada foto yang gagal diunggah."
+          );
+        }
       }
       setModalOpen(false);
       setSelected(null);
@@ -227,4 +243,3 @@ export default function KegiatanPage() {
     </div>
   );
 }
-

@@ -186,11 +186,10 @@ export default function KegiatanDetailPage() {
         <KegiatanFormModal
           initialValue={kegiatan as Kegiatan}
           onClose={() => setEditing(false)}
-          onSubmit={handleSaveKegiatan}
+          onSubmit={(payload) => handleSaveKegiatan(payload)}
           saving={savingInfo}
         />
       ) : null}
     </div>
   );
 }
-

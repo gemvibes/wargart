@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { JENIS_KEGIATAN_OPTIONS, STATUS_KEGIATAN_OPTIONS } from "@/lib/constants";
-import { Kegiatan, KegiatanPayload } from "@/lib/types";
+import { Kegiatan, KegiatanPayload, KegiatanPhotoDraft } from "@/lib/types";
 import { buildHariFromDate } from "@/lib/utils";
 
 const initialForm: KegiatanPayload = {
@@ -17,6 +17,24 @@ const initialForm: KegiatanPayload = {
   status_kegiatan: "Draft"
 };
 
+const MAX_FOTO_KEGIATAN = 4;
+
+function toBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const value = reader.result;
+      if (typeof value !== "string") {
+        reject(new Error("Gagal membaca file foto."));
+        return;
+      }
+      resolve(value.split(",")[1] ?? "");
+    };
+    reader.onerror = () => reject(new Error("Gagal membaca file foto."));
+    reader.readAsDataURL(file);
+  });
+}
+
 export function KegiatanFormModal({
   initialValue,
   onClose,
@@ -25,10 +43,11 @@ export function KegiatanFormModal({
 }: {
   initialValue?: Kegiatan | null;
   onClose: () => void;
-  onSubmit: (payload: KegiatanPayload) => Promise<void>;
+  onSubmit: (payload: KegiatanPayload, photos: KegiatanPhotoDraft[]) => Promise<void>;
   saving: boolean;
 }) {
   const [form, setForm] = useState<KegiatanPayload>(initialForm);
+  const [selectedPhotos, setSelectedPhotos] = useState<File[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -44,10 +63,40 @@ export function KegiatanFormModal({
         laporan: initialValue.laporan,
         status_kegiatan: initialValue.status_kegiatan
       });
+      setSelectedPhotos([]);
     } else {
       setForm(initialForm);
+      setSelectedPhotos([]);
     }
   }, [initialValue]);
+
+  function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+
+    if (!files.length) return;
+
+    const invalidFile = files.find((file) => !file.type.startsWith("image/"));
+    if (invalidFile) {
+      setError("Semua file dokumentasi harus berupa gambar.");
+      return;
+    }
+
+    setSelectedPhotos((prev) => {
+      const next = [...prev, ...files].slice(0, MAX_FOTO_KEGIATAN);
+      if (prev.length + files.length > MAX_FOTO_KEGIATAN) {
+        setError(`Maksimal ${MAX_FOTO_KEGIATAN} foto dapat diunggah.`);
+      } else {
+        setError("");
+      }
+      return next;
+    });
+  }
+
+  function removePhoto(indexToRemove: number) {
+    setSelectedPhotos((prev) => prev.filter((_, index) => index !== indexToRemove));
+    setError("");
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,10 +107,32 @@ export function KegiatanFormModal({
       return;
     }
 
+    if (!initialValue && selectedPhotos.length < 1) {
+      setError("Minimal 1 foto kegiatan wajib diunggah saat menambah kegiatan.");
+      return;
+    }
+
+    if (!initialValue && selectedPhotos.length > MAX_FOTO_KEGIATAN) {
+      setError(`Maksimal ${MAX_FOTO_KEGIATAN} foto dapat diunggah.`);
+      return;
+    }
+
+    const photos =
+      initialValue || selectedPhotos.length === 0
+        ? []
+        : await Promise.all(
+            selectedPhotos.map(async (file) => ({
+              file_name: file.name,
+              mime_type: file.type,
+              base64_data: await toBase64(file),
+              caption: ""
+            }))
+          );
+
     await onSubmit({
       ...form,
       hari: buildHariFromDate(form.tanggal)
-    });
+    }, photos);
   }
 
   return (
@@ -189,6 +260,43 @@ export function KegiatanFormModal({
                 value={form.laporan}
               />
             </div>
+
+            {!initialValue ? (
+              <div className="field full">
+                <label>Foto Kegiatan</label>
+                <input
+                  accept="image/*"
+                  className="input"
+                  multiple
+                  onChange={handlePhotoChange}
+                  type="file"
+                />
+                <span className="helper-text">
+                  Unggah minimal 1 dan maksimal {MAX_FOTO_KEGIATAN} foto saat membuat kegiatan.
+                </span>
+                {selectedPhotos.length > 0 ? (
+                  <div className="quick-list" style={{ marginTop: 10 }}>
+                    {selectedPhotos.map((file, index) => (
+                      <div className="quick-list-item inline-between" key={`${file.name}-${index}`}>
+                        <div>
+                          <strong>{file.name}</strong>
+                          <div className="helper-text">
+                            Foto {index + 1} dari {MAX_FOTO_KEGIATAN}
+                          </div>
+                        </div>
+                        <button
+                          className="button ghost"
+                          onClick={() => removePhoto(index)}
+                          type="button"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           {error ? <div className="error-state">{error}</div> : null}
@@ -204,4 +312,3 @@ export function KegiatanFormModal({
     </div>
   );
 }
-
