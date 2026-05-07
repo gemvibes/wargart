@@ -119,7 +119,7 @@ export function WargaFormModal({
               <label>Jumlah Anggota KK</label>
               <input
                 className="input"
-                min={1}
+                min={0}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, jumlah_anggota_kk: Number(event.target.value) || 0 }))
                 }
