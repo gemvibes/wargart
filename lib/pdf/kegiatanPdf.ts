@@ -3,14 +3,21 @@ import { KegiatanPdfExportPayload } from "@/lib/types";
 import { base64ToUint8Array, formatDate } from "@/lib/utils";
 
 const A4_PORTRAIT: [number, number] = [595.28, 841.89];
-const A4_LANDSCAPE: [number, number] = [841.89, 595.28];
 const PAGE_MARGIN = 42;
+const SECTION_GAP = 16;
 const TEXT_COLOR = rgb(0.09, 0.2, 0.18);
 const MUTED_COLOR = rgb(0.34, 0.45, 0.43);
+const BORDER_COLOR = rgb(0.79, 0.85, 0.83);
+const HEADER_FILL = rgb(0.93, 0.96, 0.95);
 
 type CursorState = {
   page: PDFPage;
   y: number;
+};
+
+type MetaRow = {
+  label: string;
+  value: string;
 };
 
 function splitTextLines(text: string, font: PDFFont, size: number, maxWidth: number) {
@@ -53,6 +60,316 @@ function downloadBlob(filename: string, blob: Blob) {
   URL.revokeObjectURL(url);
 }
 
+function addTextPage(pdfDoc: PDFDocument) {
+  return pdfDoc.addPage(A4_PORTRAIT);
+}
+
+function ensureSpace(pdfDoc: PDFDocument, state: CursorState, minimumHeight: number) {
+  if (state.y - minimumHeight >= PAGE_MARGIN) {
+    return state;
+  }
+
+  const page = addTextPage(pdfDoc);
+  return {
+    page,
+    y: page.getHeight() - PAGE_MARGIN
+  };
+}
+
+function formatTimeValue(value: string) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const withoutSuffix = raw.replace(/\s*wib$/i, "").trim();
+  const match = withoutSuffix.match(/^(\d{1,2})[:.](\d{2})$/);
+  if (match) {
+    return `${match[1].padStart(2, "0")}.${match[2]}`;
+  }
+
+  return withoutSuffix.replace(/:/g, ".");
+}
+
+function formatTimeRange(start: string, end: string) {
+  const startValue = formatTimeValue(start);
+  const endValue = formatTimeValue(end);
+
+  if (!startValue && !endValue) return "-";
+  if (startValue && endValue) return `${startValue} - ${endValue} WIB`;
+  return `${startValue || endValue} WIB`;
+}
+
+function drawParagraph(
+  pdfDoc: PDFDocument,
+  state: CursorState,
+  text: string,
+  font: PDFFont,
+  size: number,
+  color = TEXT_COLOR,
+  extraBottom = 8
+) {
+  const lines = splitTextLines(text, font, size, state.page.getWidth() - PAGE_MARGIN * 2);
+  const lineHeight = size + 5;
+  const nextState = ensureSpace(pdfDoc, state, lines.length * lineHeight + extraBottom);
+
+  lines.forEach((line) => {
+    nextState.page.drawText(line, {
+      x: PAGE_MARGIN,
+      y: nextState.y,
+      size,
+      font,
+      color
+    });
+    nextState.y -= lineHeight;
+  });
+
+  nextState.y -= extraBottom;
+  return nextState;
+}
+
+function drawMetaTable(
+  pdfDoc: PDFDocument,
+  state: CursorState,
+  rows: MetaRow[],
+  boldFont: PDFFont,
+  font: PDFFont
+) {
+  const labelWidth = rows.reduce((width, row) => {
+    return Math.max(width, boldFont.widthOfTextAtSize(row.label, 11));
+  }, 0);
+  const colonX = PAGE_MARGIN + labelWidth + 8;
+  const valueX = colonX + 10;
+  const maxValueWidth = state.page.getWidth() - PAGE_MARGIN - valueX;
+  let nextState = state;
+
+  rows.forEach((row) => {
+    const valueLines = splitTextLines(row.value || "-", font, 11, maxValueWidth);
+    const rowHeight = Math.max(1, valueLines.length) * 16 + 2;
+    nextState = ensureSpace(pdfDoc, nextState, rowHeight);
+
+    nextState.page.drawText(row.label, {
+      x: PAGE_MARGIN,
+      y: nextState.y,
+      size: 11,
+      font: boldFont,
+      color: TEXT_COLOR
+    });
+
+    nextState.page.drawText(":", {
+      x: colonX,
+      y: nextState.y,
+      size: 11,
+      font: boldFont,
+      color: TEXT_COLOR
+    });
+
+    valueLines.forEach((line, index) => {
+      nextState.page.drawText(line, {
+        x: valueX,
+        y: nextState.y - index * 16,
+        size: 11,
+        font,
+        color: TEXT_COLOR
+      });
+    });
+
+    nextState.y -= rowHeight;
+  });
+
+  nextState.y -= 8;
+  return nextState;
+}
+
+function drawSectionTitle(pdfDoc: PDFDocument, state: CursorState, title: string, boldFont: PDFFont) {
+  const nextState = ensureSpace(pdfDoc, state, 24);
+  nextState.page.drawText(title, {
+    x: PAGE_MARGIN,
+    y: nextState.y,
+    size: 13,
+    font: boldFont,
+    color: TEXT_COLOR
+  });
+  nextState.y -= 22;
+  return nextState;
+}
+
+function drawAttendanceTable(
+  pdfDoc: PDFDocument,
+  state: CursorState,
+  names: string[],
+  boldFont: PDFFont,
+  font: PDFFont
+) {
+  const pageWidth = state.page.getWidth();
+  const tableWidth = pageWidth - PAGE_MARGIN * 2;
+  const noWidth = 54;
+  const namaWidth = tableWidth - noWidth;
+  const headerHeight = 24;
+  const leftX = PAGE_MARGIN;
+  let nextState = state;
+
+  const drawHeader = () => {
+    nextState.page.drawRectangle({
+      x: leftX,
+      y: nextState.y - headerHeight + 4,
+      width: tableWidth,
+      height: headerHeight,
+      borderColor: BORDER_COLOR,
+      borderWidth: 1,
+      color: HEADER_FILL
+    });
+
+    nextState.page.drawLine({
+      start: { x: leftX + noWidth, y: nextState.y - headerHeight + 4 },
+      end: { x: leftX + noWidth, y: nextState.y + 4 },
+      thickness: 1,
+      color: BORDER_COLOR
+    });
+
+    nextState.page.drawText("No", {
+      x: leftX + 18,
+      y: nextState.y - 12,
+      size: 10.5,
+      font: boldFont,
+      color: TEXT_COLOR
+    });
+
+    nextState.page.drawText("Nama", {
+      x: leftX + noWidth + 10,
+      y: nextState.y - 12,
+      size: 10.5,
+      font: boldFont,
+      color: TEXT_COLOR
+    });
+
+    nextState.y -= headerHeight;
+  };
+
+  nextState = ensureSpace(pdfDoc, nextState, 120);
+  drawHeader();
+
+  if (!names.length) {
+    nextState = ensureSpace(pdfDoc, nextState, 28);
+    nextState.page.drawRectangle({
+      x: leftX,
+      y: nextState.y - 20,
+      width: tableWidth,
+      height: 24,
+      borderColor: BORDER_COLOR,
+      borderWidth: 1
+    });
+    nextState.page.drawText("Belum ada warga yang ditandai hadir.", {
+      x: leftX + 10,
+      y: nextState.y - 12,
+      size: 10.5,
+      font,
+      color: MUTED_COLOR
+    });
+    nextState.y -= 28;
+    return nextState;
+  }
+
+  names.forEach((name, index) => {
+    const nameLines = splitTextLines(name, font, 10.5, namaWidth - 20);
+    const rowHeight = Math.max(24, nameLines.length * 14 + 10);
+
+    nextState = ensureSpace(pdfDoc, nextState, rowHeight + 8);
+    if (nextState.y === nextState.page.getHeight() - PAGE_MARGIN) {
+      drawHeader();
+    }
+
+    nextState.page.drawRectangle({
+      x: leftX,
+      y: nextState.y - rowHeight + 4,
+      width: tableWidth,
+      height: rowHeight,
+      borderColor: BORDER_COLOR,
+      borderWidth: 1
+    });
+
+    nextState.page.drawLine({
+      start: { x: leftX + noWidth, y: nextState.y - rowHeight + 4 },
+      end: { x: leftX + noWidth, y: nextState.y + 4 },
+      thickness: 1,
+      color: BORDER_COLOR
+    });
+
+    nextState.page.drawText(String(index + 1), {
+      x: leftX + 18,
+      y: nextState.y - 14,
+      size: 10.5,
+      font,
+      color: TEXT_COLOR
+    });
+
+    nameLines.forEach((line, lineIndex) => {
+      nextState.page.drawText(line, {
+        x: leftX + noWidth + 10,
+        y: nextState.y - 14 - lineIndex * 14,
+        size: 10.5,
+        font,
+        color: TEXT_COLOR
+      });
+    });
+
+    nextState.y -= rowHeight;
+  });
+
+  nextState.y -= 10;
+  return nextState;
+}
+
+function drawSignatureColumns(
+  pdfDoc: PDFDocument,
+  state: CursorState,
+  ketua: string,
+  sekretaris: string,
+  boldFont: PDFFont,
+  font: PDFFont
+) {
+  const blockHeight = 120;
+  const nextState = ensureSpace(pdfDoc, state, blockHeight);
+  const gap = 24;
+  const totalWidth = nextState.page.getWidth() - PAGE_MARGIN * 2;
+  const columnWidth = (totalWidth - gap) / 2;
+  const leftX = PAGE_MARGIN;
+  const rightX = PAGE_MARGIN + columnWidth + gap;
+  const topY = nextState.y;
+
+  const drawCentered = (text: string, x: number, width: number, y: number, fontRef: PDFFont, size: number) => {
+    const textWidth = fontRef.widthOfTextAtSize(text, size);
+    nextState.page.drawText(text, {
+      x: x + (width - textWidth) / 2,
+      y,
+      size,
+      font: fontRef,
+      color: TEXT_COLOR
+    });
+  };
+
+  drawCentered("Ketua RT", leftX, columnWidth, topY, font, 11);
+  drawCentered("Sekretaris", rightX, columnWidth, topY, font, 11);
+
+  nextState.page.drawLine({
+    start: { x: leftX + 28, y: topY - 66 },
+    end: { x: leftX + columnWidth - 28, y: topY - 66 },
+    thickness: 0.8,
+    color: BORDER_COLOR
+  });
+
+  nextState.page.drawLine({
+    start: { x: rightX + 28, y: topY - 66 },
+    end: { x: rightX + columnWidth - 28, y: topY - 66 },
+    thickness: 0.8,
+    color: BORDER_COLOR
+  });
+
+  drawCentered(ketua || "(Nama Ketua RT)", leftX, columnWidth, topY - 82, boldFont, 11);
+  drawCentered(sekretaris || "(Nama Sekretaris)", rightX, columnWidth, topY - 82, boldFont, 11);
+
+  nextState.y -= blockHeight;
+  return nextState;
+}
+
 async function embedImage(pdfDoc: PDFDocument, mimeType: string, bytes: Uint8Array) {
   if (mimeType === "image/png") {
     return pdfDoc.embedPng(bytes);
@@ -91,145 +408,32 @@ async function embedImage(pdfDoc: PDFDocument, mimeType: string, bytes: Uint8Arr
   return pdfDoc.embedPng(converted);
 }
 
-function addTextPage(pdfDoc: PDFDocument) {
-  return pdfDoc.addPage(A4_PORTRAIT);
-}
-
-function ensureSpace(
-  pdfDoc: PDFDocument,
-  state: CursorState,
-  minimumHeight: number
-) {
-  if (state.y - minimumHeight >= PAGE_MARGIN) {
-    return state;
+function chunkPhotos<T>(items: T[], chunkSize: number) {
+  const chunks: T[][] = [];
+  for (let index = 0; index < items.length; index += chunkSize) {
+    chunks.push(items.slice(index, index + chunkSize));
   }
-
-  const page = addTextPage(pdfDoc);
-  return {
-    page,
-    y: page.getHeight() - PAGE_MARGIN
-  };
+  return chunks;
 }
 
-function drawParagraph(
-  pdfDoc: PDFDocument,
-  state: CursorState,
-  text: string,
-  font: PDFFont,
-  size: number,
-  color = TEXT_COLOR,
-  extraBottom = 8
-) {
-  const lines = splitTextLines(text, font, size, state.page.getWidth() - PAGE_MARGIN * 2);
-  const lineHeight = size + 4;
-  const nextState = ensureSpace(pdfDoc, state, lines.length * lineHeight + extraBottom);
-
-  lines.forEach((line) => {
-    nextState.page.drawText(line, {
-      x: PAGE_MARGIN,
-      y: nextState.y,
-      size,
-      font,
-      color
-    });
-    nextState.y -= lineHeight;
-  });
-
-  nextState.y -= extraBottom;
-  return nextState;
-}
-
-function drawMetaRow(
-  pdfDoc: PDFDocument,
-  state: CursorState,
-  label: string,
-  value: string,
-  boldFont: PDFFont,
+function drawPhotoCard(
+  page: PDFPage,
+  image: PDFImage,
+  caption: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
   font: PDFFont
 ) {
-  const labelText = label + ":";
-  const labelWidth = boldFont.widthOfTextAtSize(labelText, 11);
-  const valueX = PAGE_MARGIN + labelWidth + 10;
-  const maxWidth = state.page.getWidth() - PAGE_MARGIN - valueX;
-  const lines = splitTextLines(value, font, 11, maxWidth);
-  const lineHeight = 16;
-  const nextState = ensureSpace(pdfDoc, state, Math.max(1, lines.length) * lineHeight + 4);
-
-  nextState.page.drawText(labelText, {
-    x: PAGE_MARGIN,
-    y: nextState.y,
-    size: 11,
-    font: boldFont,
-    color: TEXT_COLOR
-  });
-
-  lines.forEach((line, index) => {
-    nextState.page.drawText(line, {
-      x: valueX,
-      y: nextState.y - index * lineHeight,
-      size: 11,
-      font,
-      color: TEXT_COLOR
-    });
-  });
-
-  nextState.y -= Math.max(1, lines.length) * lineHeight;
-  return nextState;
-}
-
-function drawSectionTitle(
-  pdfDoc: PDFDocument,
-  state: CursorState,
-  title: string,
-  boldFont: PDFFont
-) {
-  const nextState = ensureSpace(pdfDoc, state, 28);
-  nextState.page.drawText(title, {
-    x: PAGE_MARGIN,
-    y: nextState.y,
-    size: 14,
-    font: boldFont,
-    color: TEXT_COLOR
-  });
-  nextState.y -= 24;
-  return nextState;
-}
-
-function addPhotoPage(
-  pdfDoc: PDFDocument,
-  titleFont: PDFFont,
-  bodyFont: PDFFont,
-  photoTitle: string,
-  caption: string,
-  image: PDFImage
-) {
-  const isLandscape = image.width > image.height;
-  const page = pdfDoc.addPage(isLandscape ? A4_LANDSCAPE : A4_PORTRAIT);
-  const pageWidth = page.getWidth();
-  const pageHeight = page.getHeight();
-
-  page.drawText(photoTitle, {
-    x: PAGE_MARGIN,
-    y: pageHeight - PAGE_MARGIN,
-    size: 16,
-    font: titleFont,
-    color: TEXT_COLOR
-  });
-
-  const captionLines = splitTextLines(
-    caption || "Tanpa caption",
-    bodyFont,
-    11,
-    pageWidth - PAGE_MARGIN * 2
-  );
-  const captionHeight = captionLines.length * 15 + 18;
-  const maxWidth = pageWidth - PAGE_MARGIN * 2;
-  const maxHeight = pageHeight - PAGE_MARGIN * 2 - 40 - captionHeight;
-  const scale = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
-  const imageWidth = image.width * scale;
-  const imageHeight = image.height * scale;
-  const imageX = (pageWidth - imageWidth) / 2;
-  const imageY = PAGE_MARGIN + captionHeight;
+  const captionLines = splitTextLines(caption || "Tanpa caption", font, 9, width - 12).slice(0, 2);
+  const captionHeight = captionLines.length ? captionLines.length * 12 + 8 : 0;
+  const imageAreaHeight = height - captionHeight - 8;
+  const imageScale = Math.min(width / image.width, imageAreaHeight / image.height, 1);
+  const imageWidth = image.width * imageScale;
+  const imageHeight = image.height * imageScale;
+  const imageX = x + (width - imageWidth) / 2;
+  const imageY = y + captionHeight + (imageAreaHeight - imageHeight) / 2;
 
   page.drawImage(image, {
     x: imageX,
@@ -240,11 +444,59 @@ function addPhotoPage(
 
   captionLines.forEach((line, index) => {
     page.drawText(line, {
-      x: PAGE_MARGIN,
-      y: PAGE_MARGIN + captionHeight - 14 - index * 15,
-      size: 11,
-      font: bodyFont,
+      x: x + 6,
+      y: y + captionHeight - 10 - index * 12,
+      size: 9,
+      font,
       color: MUTED_COLOR
+    });
+  });
+}
+
+async function addPhotoGridPages(
+  pdfDoc: PDFDocument,
+  photos: KegiatanPdfExportPayload["photos"],
+  boldFont: PDFFont,
+  font: PDFFont
+) {
+  const embeddedPhotos = await Promise.all(
+    photos.map(async (photo) => ({
+      caption: photo.caption || photo.file_name,
+      image: await embedImage(pdfDoc, photo.mime_type, base64ToUint8Array(photo.base64_data))
+    }))
+  );
+
+  const photoPages = chunkPhotos(embeddedPhotos, 4);
+
+  photoPages.forEach((pagePhotos, pageIndex) => {
+    const page = pdfDoc.addPage(A4_PORTRAIT);
+    const pageWidth = page.getWidth();
+    const pageHeight = page.getHeight();
+    const title = pageIndex === 0 ? "Dokumentasi Foto" : `Dokumentasi Foto (${pageIndex + 1})`;
+
+    page.drawText(title, {
+      x: PAGE_MARGIN,
+      y: pageHeight - PAGE_MARGIN,
+      size: 13,
+      font: boldFont,
+      color: TEXT_COLOR
+    });
+
+    const gridTop = pageHeight - PAGE_MARGIN - 28;
+    const gridBottom = PAGE_MARGIN + 20;
+    const gridHeight = gridTop - gridBottom;
+    const gap = 10;
+    const cellWidth = (pageWidth - PAGE_MARGIN * 2 - gap) / 2;
+    const cellHeight = (gridHeight - gap) / 2;
+
+    pagePhotos.forEach((photo, index) => {
+      const column = index % 2;
+      const row = Math.floor(index / 2);
+      const x = PAGE_MARGIN + column * (cellWidth + gap);
+      const topY = gridTop - row * (cellHeight + gap);
+      const y = topY - cellHeight;
+
+      drawPhotoCard(page, photo.image, photo.caption, x, y, cellWidth, cellHeight, font);
     });
   });
 }
@@ -269,97 +521,53 @@ export async function downloadKegiatanPdf(payload: KegiatanPdfExportPayload) {
   });
   state.y -= 28;
 
-  state = drawMetaRow(pdfDoc, state, "Nama kegiatan", kegiatan.nama_kegiatan, boldFont, font);
-  state = drawMetaRow(pdfDoc, state, "Jenis kegiatan", kegiatan.jenis_kegiatan, boldFont, font);
-  state = drawMetaRow(
+  state = drawMetaTable(
     pdfDoc,
     state,
-    "Hari / tanggal",
-    kegiatan.hari + ", " + formatDate(kegiatan.tanggal),
+    [
+      { label: "Nama kegiatan", value: kegiatan.nama_kegiatan },
+      { label: "Hari / tanggal", value: `${kegiatan.hari}, ${formatDate(kegiatan.tanggal)}` },
+      { label: "Waktu", value: formatTimeRange(kegiatan.waktu_mulai, kegiatan.waktu_selesai) },
+      { label: "Tempat", value: kegiatan.tempat || "-" },
+      { label: "Dicetak", value: formatDate(payload.generated_at) }
+    ],
     boldFont,
     font
   );
-  state = drawMetaRow(
-    pdfDoc,
-    state,
-    "Waktu",
-    kegiatan.waktu_mulai + " - " + kegiatan.waktu_selesai,
-    boldFont,
-    font
-  );
-  state = drawMetaRow(pdfDoc, state, "Tempat", kegiatan.tempat, boldFont, font);
-  state = drawMetaRow(
-    pdfDoc,
-    state,
-    "Dicetak",
-    formatDate(payload.generated_at),
-    boldFont,
-    font
-  );
-  state.y -= 8;
 
+  state.y -= SECTION_GAP - 8;
   state = drawSectionTitle(pdfDoc, state, "Laporan / Notulen", boldFont);
   state = drawParagraph(
     pdfDoc,
     state,
     kegiatan.laporan || "Belum ada laporan kegiatan.",
     font,
-    11
-  );
-
-  state = drawSectionTitle(pdfDoc, state, "Daftar Hadir", boldFont);
-  if (!payload.attendance.length) {
-    state = drawParagraph(pdfDoc, state, "Belum ada warga yang ditandai hadir.", font, 11);
-  } else {
-    payload.attendance.forEach((item, index) => {
-      const line =
-        index +
-        1 +
-        ". " +
-        item.nama +
-        " - Rumah " +
-        item.nomor_rumah +
-        " - Dawis " +
-        item.dawis +
-        (item.catatan ? " - Catatan: " + item.catatan : "");
-      state = drawParagraph(pdfDoc, state, line, font, 11, TEXT_COLOR, 4);
-    });
-    state.y -= 6;
-  }
-
-  state = drawSectionTitle(pdfDoc, state, "Pengesahan", boldFont);
-  state = drawParagraph(
-    pdfDoc,
-    state,
-    "Ketua RT: " + payload.nama_ketua_rt,
-    font,
     11,
     TEXT_COLOR,
-    4
-  );
-  state = drawParagraph(
-    pdfDoc,
-    state,
-    "Sekretaris: " + payload.nama_sekretaris,
-    font,
-    11
+    10
   );
 
-  for (let index = 0; index < payload.photos.length; index += 1) {
-    const photo = payload.photos[index];
-    const image = await embedImage(
-      pdfDoc,
-      photo.mime_type,
-      base64ToUint8Array(photo.base64_data)
-    );
-    addPhotoPage(
-      pdfDoc,
-      boldFont,
-      font,
-      "Dokumentasi Foto " + (index + 1),
-      photo.caption || photo.file_name,
-      image
-    );
+  state.y -= 4;
+  state = drawSectionTitle(pdfDoc, state, "Daftar Hadir", boldFont);
+  state = drawAttendanceTable(
+    pdfDoc,
+    state,
+    payload.attendance.map((item) => item.nama),
+    boldFont,
+    font
+  );
+
+  state = drawSignatureColumns(
+    pdfDoc,
+    state,
+    payload.nama_ketua_rt,
+    payload.nama_sekretaris,
+    boldFont,
+    font
+  );
+
+  if (payload.photos.length) {
+    await addPhotoGridPages(pdfDoc, payload.photos, boldFont, font);
   }
 
   const bytes = await pdfDoc.save();
