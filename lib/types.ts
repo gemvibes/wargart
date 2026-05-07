@@ -120,6 +120,12 @@ export interface KegiatanDetailResponse {
   photos: FotoKegiatan[];
 }
 
+export interface ExportFilePayload {
+  fileName: string;
+  mimeType: string;
+  base64Data: string;
+}
+
 export interface RekapKehadiranItem {
   warga_id: string;
   nama: string;

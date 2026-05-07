@@ -52,6 +52,23 @@ export function downloadTextFile(filename: string, content: string, type: string
   URL.revokeObjectURL(url);
 }
 
+export function downloadBase64File(filename: string, base64Data: string, type: string) {
+  const binary = window.atob(base64Data);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  const blob = new Blob([bytes], { type });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 export function escapeCsvValue(value: string | number) {
   const output = String(value ?? "");
   if (output.includes(",") || output.includes("\"") || output.includes("\n")) {
@@ -59,4 +76,3 @@ export function escapeCsvValue(value: string | number) {
   }
   return output;
 }
-

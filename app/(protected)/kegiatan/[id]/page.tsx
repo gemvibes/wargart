@@ -12,7 +12,7 @@ import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { apiClient } from "@/lib/api/client";
 import { AttendanceItem, Kegiatan, KegiatanPayload, KegiatanDetailResponse } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { downloadBase64File, formatDate } from "@/lib/utils";
 
 export default function KegiatanDetailPage() {
   const params = useParams<{ id: string }>();
@@ -95,7 +95,7 @@ export default function KegiatanDetailPage() {
   async function handleExport(format: "pdf" | "docx") {
     try {
       const result = await apiClient.exportKegiatan(kegiatanId, format);
-      window.open(result.fileUrl, "_blank", "noopener,noreferrer");
+      downloadBase64File(result.fileName, result.base64Data, result.mimeType);
     } catch (exportError) {
       setError(exportError instanceof Error ? exportError.message : "Export gagal diproses.");
     }
