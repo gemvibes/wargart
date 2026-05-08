@@ -318,6 +318,10 @@ img {
   align-items: start;
 }
 
+.activity-detail-grid {
+  align-items: stretch;
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1526,6 +1530,18 @@ a.quick-list-item::after {
   gap: 8px;
 }
 
+.kegiatan-desktop-list {
+  display: block !important;
+}
+
+.kegiatan-mobile-list {
+  display: none !important;
+}
+
+.activity-detail-grid > .card {
+  height: 100%;
+}
+
 .activity-info-card,
 .activity-minutes-card {
   min-height: 248px;
@@ -1538,7 +1554,7 @@ a.quick-list-item::after {
 
 .activity-minutes-scroll {
   min-height: 0;
-  max-height: 172px;
+  height: 100%;
   overflow: auto;
   margin: 0;
   padding-right: 8px;
@@ -1779,6 +1795,14 @@ a.quick-list-item::after {
     display: block;
   }
 
+  .kegiatan-desktop-list {
+    display: none !important;
+  }
+
+  .kegiatan-mobile-list {
+    display: grid !important;
+  }
+
   .list-toolbar {
     align-items: stretch;
     flex-direction: column;
@@ -1803,7 +1827,16 @@ a.quick-list-item::after {
     min-height: 0;
   }
 
+  .activity-detail-grid {
+    align-items: start;
+  }
+
+  .activity-detail-grid > .card {
+    height: auto;
+  }
+
   .activity-minutes-scroll {
+    height: auto;
     max-height: 180px;
   }
 

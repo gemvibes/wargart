@@ -144,7 +144,7 @@ export default function KegiatanDetailPage() {
 
       {error ? <ErrorMessage message={error} onRetry={loadDetail} /> : null}
 
-      <section className="detail-grid">
+      <section className="detail-grid activity-detail-grid">
         <div className="card activity-info-card">
           <div className="modal-header">
             <div>

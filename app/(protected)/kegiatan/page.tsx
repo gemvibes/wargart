@@ -189,7 +189,7 @@ export default function KegiatanPage() {
               </div>
             </div>
 
-            <div className="desktop-only scroll-surface table-wrap" style={listStyle}>
+            <div className="kegiatan-desktop-list scroll-surface table-wrap" style={listStyle}>
               <table className="table">
                 <thead>
                   <tr>
@@ -250,7 +250,7 @@ export default function KegiatanPage() {
               </table>
             </div>
 
-            <div className="mobile-only mobile-card-list scroll-surface" style={listStyle}>
+            <div className="kegiatan-mobile-list mobile-card-list scroll-surface" style={listStyle}>
               {kegiatan.map((item) => (
                 <article className="mobile-data-card" key={item.kegiatan_id}>
                   <div className="mobile-data-header">
