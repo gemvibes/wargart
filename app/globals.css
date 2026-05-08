@@ -839,6 +839,66 @@ img {
   flex-wrap: nowrap;
 }
 
+.warga-mobile-list {
+  display: grid;
+  gap: 10px;
+}
+
+.warga-mobile-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #deebe7;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+}
+
+.warga-mobile-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.warga-mobile-head strong {
+  display: block;
+  color: var(--text-strong);
+  line-height: 1.3;
+}
+
+.warga-mobile-head .helper-text {
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.warga-mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.warga-mobile-item {
+  display: grid;
+  gap: 3px;
+}
+
+.warga-mobile-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.warga-mobile-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.warga-mobile-actions .button {
+  flex: 1;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -1703,58 +1763,6 @@ a.quick-list-item::after {
     padding: 16px;
   }
 
-  .warga-table-wrap {
-    margin-left: -6px;
-    margin-right: -6px;
-    border-radius: 20px;
-  }
-
-  .warga-table {
-    min-width: 760px;
-  }
-
-  .warga-table th,
-  .warga-table td {
-    padding: 12px 12px;
-  }
-
-  .warga-table thead th {
-    font-size: 0.68rem;
-    letter-spacing: 0.05em;
-  }
-
-  .warga-table tbody td,
-  .warga-table .helper-text,
-  .warga-table .badge,
-  .warga-action-row .button {
-    font-size: 0.76rem;
-  }
-
-  .warga-name-cell strong {
-    margin-bottom: 4px;
-    font-size: 0.84rem;
-    line-height: 1.32;
-  }
-
-  .warga-col-name {
-    min-width: 190px;
-  }
-
-  .warga-col-action,
-  .warga-action-cell {
-    min-width: 132px;
-  }
-
-  .warga-action-row {
-    gap: 6px;
-  }
-
-  .warga-action-row .button {
-    min-height: 32px;
-    padding: 0 10px;
-    border-radius: 9px;
-  }
-
   .login-shell {
     min-height: calc(100vh - 32px);
   }
@@ -1821,6 +1829,45 @@ a.quick-list-item::after {
 
   .dashboard-mini-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .warga-mobile-list {
+    gap: 8px;
+  }
+
+  .warga-mobile-card {
+    gap: 8px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .warga-mobile-head strong {
+    font-size: 0.88rem;
+  }
+
+  .warga-mobile-head .helper-text,
+  .warga-mobile-item,
+  .warga-mobile-actions .button,
+  .warga-mobile-card .badge {
+    font-size: 0.76rem;
+  }
+
+  .warga-mobile-grid {
+    gap: 8px 10px;
+  }
+
+  .warga-mobile-label {
+    font-size: 0.66rem;
+  }
+
+  .warga-mobile-actions {
+    gap: 6px;
+  }
+
+  .warga-mobile-actions .button {
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 9px;
   }
 
 }
