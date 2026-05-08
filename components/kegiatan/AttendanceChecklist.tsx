@@ -18,6 +18,7 @@ export function AttendanceChecklist({
   const [items, setItems] = useState<AttendanceItem[]>(initialItems);
   const [search, setSearch] = useState("");
   const [dawisFilter, setDawisFilter] = useState("");
+  const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
 
   useEffect(() => {
     setItems(initialItems);
@@ -34,6 +35,7 @@ export function AttendanceChecklist({
       }),
     [dawisFilter, items, search]
   );
+  const listHeight = visibleCount === 10 ? 640 : 1120;
 
   function updateItem(wargaId: string, patch: Partial<AttendanceItem>) {
     setItems((prev) =>
@@ -88,42 +90,60 @@ export function AttendanceChecklist({
       ) : filteredItems.length === 0 ? (
         <p className="helper-text">Tidak ada warga yang cocok dengan pencarian atau filter Dawis.</p>
       ) : (
-        <div className="attendance-list">
-          {filteredItems.map((item) => (
-            <div className="attendance-row" key={item.warga_id}>
-              <div>
-                <strong>{item.nama}</strong>
-                <div className="helper-text">Rumah {item.nomor_rumah} • Dawis {item.dawis}</div>
-              </div>
-
-              <label className="list-row" style={{ justifyContent: "flex-start" }}>
-                <input
-                  checked={item.status_hadir === "Hadir"}
-                  disabled={!canEdit}
-                  onChange={(event) =>
-                    updateItem(item.warga_id, {
-                      status_hadir: event.target.checked ? "Hadir" : "Tidak Hadir"
-                    })
-                  }
-                  type="checkbox"
-                />
-                Hadir
-              </label>
-
-              <span className={`badge ${item.status_hadir === "Hadir" ? "green" : "red"}`}>
-                {item.status_hadir}
-              </span>
-
-              <input
-                className="input"
-                disabled={!canEdit}
-                onChange={(event) => updateItem(item.warga_id, { catatan: event.target.value })}
-                placeholder="Catatan"
-                value={item.catatan}
-              />
+        <>
+          <div className="list-toolbar">
+            <p className="helper-text">Total {filteredItems.length} warga ditampilkan.</p>
+            <div className="list-size-control">
+              <label htmlFor="attendance-visible-count">Tampilkan</label>
+              <select
+                className="select"
+                id="attendance-visible-count"
+                onChange={(event) => setVisibleCount(Number(event.target.value) as 10 | 20)}
+                value={visibleCount}
+              >
+                <option value="10">10 data</option>
+                <option value="20">20 data</option>
+              </select>
             </div>
-          ))}
-        </div>
+          </div>
+
+          <div className="attendance-list scroll-surface" style={{ maxHeight: listHeight }}>
+            {filteredItems.map((item) => (
+              <div className="attendance-row" key={item.warga_id}>
+                <div>
+                  <strong>{item.nama}</strong>
+                  <div className="helper-text">Rumah {item.nomor_rumah || "-"} | Dawis {item.dawis || "-"}</div>
+                </div>
+
+                <label className="list-row" style={{ justifyContent: "flex-start" }}>
+                  <input
+                    checked={item.status_hadir === "Hadir"}
+                    disabled={!canEdit}
+                    onChange={(event) =>
+                      updateItem(item.warga_id, {
+                        status_hadir: event.target.checked ? "Hadir" : "Tidak Hadir"
+                      })
+                    }
+                    type="checkbox"
+                  />
+                  Hadir
+                </label>
+
+                <span className={`badge ${item.status_hadir === "Hadir" ? "green" : "red"}`}>
+                  {item.status_hadir}
+                </span>
+
+                <input
+                  className="input"
+                  disabled={!canEdit}
+                  onChange={(event) => updateItem(item.warga_id, { catatan: event.target.value })}
+                  placeholder="Catatan"
+                  value={item.catatan}
+                />
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

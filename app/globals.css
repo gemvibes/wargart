@@ -1526,6 +1526,25 @@ a.quick-list-item::after {
   gap: 8px;
 }
 
+.activity-info-card,
+.activity-minutes-card {
+  min-height: 248px;
+}
+
+.activity-minutes-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.activity-minutes-scroll {
+  min-height: 0;
+  max-height: 172px;
+  overflow: auto;
+  margin: 0;
+  padding-right: 8px;
+  white-space: pre-wrap;
+}
+
 .photo-card {
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -1556,9 +1575,16 @@ a.quick-list-item::after {
   gap: 12px;
   align-items: center;
   padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border-bottom: 1px solid #edf2f1;
   background: #ffffff;
+}
+
+.attendance-row:nth-child(even) {
+  background: #fbfdfc;
+}
+
+.attendance-row:last-child {
+  border-bottom: 0;
 }
 
 .attendance-row .input {
@@ -1770,6 +1796,15 @@ a.quick-list-item::after {
 
   .attendance-row {
     grid-template-columns: 1fr;
+  }
+
+  .activity-info-card,
+  .activity-minutes-card {
+    min-height: 0;
+  }
+
+  .activity-minutes-scroll {
+    max-height: 180px;
   }
 
   .mobile-data-header,

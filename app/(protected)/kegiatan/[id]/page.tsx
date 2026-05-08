@@ -145,7 +145,7 @@ export default function KegiatanDetailPage() {
       {error ? <ErrorMessage message={error} onRetry={loadDetail} /> : null}
 
       <section className="detail-grid">
-        <div className="card">
+        <div className="card activity-info-card">
           <div className="modal-header">
             <div>
               <h3>Informasi Kegiatan</h3>
@@ -176,9 +176,9 @@ export default function KegiatanDetailPage() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card activity-minutes-card">
           <h3>Notulen / Laporan</h3>
-          <p className="helper-text" style={{ whiteSpace: "pre-wrap" }}>
+          <p className="helper-text activity-minutes-scroll">
             {kegiatan.laporan || "Belum ada laporan kegiatan."}
           </p>
         </div>
