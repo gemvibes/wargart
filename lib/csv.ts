@@ -4,7 +4,6 @@ import { escapeCsvValue } from "@/lib/utils";
 export function buildRekapCsv(rows: RekapKehadiranItem[]) {
   const header = [
     "Nama Warga",
-    "Nomor Rumah",
     "Dawis",
     "Status Tinggal",
     "Total Kegiatan",
@@ -17,7 +16,6 @@ export function buildRekapCsv(rows: RekapKehadiranItem[]) {
   const body = rows.map((row) =>
     [
       row.nama,
-      row.nomor_rumah,
       row.dawis,
       row.status_tinggal,
       row.total_kegiatan,
@@ -32,4 +30,3 @@ export function buildRekapCsv(rows: RekapKehadiranItem[]) {
 
   return [header.join(","), ...body].join("\n");
 }
-

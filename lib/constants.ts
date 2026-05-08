@@ -1,5 +1,5 @@
 export const APP_NAME = "Titena";
-export const APP_TAGLINE = "Menata data warga, mencatat kegiatan dengan rapi.";
+export const APP_TAGLINE = "Menata data warga, mencatat rembug warga.";
 
 export const ROLE_OPTIONS = ["superadmin", "viewer"] as const;
 export const DAWIS_OPTIONS = ["1", "2", "3", "4", "5", "6"] as const;

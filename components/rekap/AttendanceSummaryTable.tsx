@@ -21,7 +21,6 @@ export function AttendanceSummaryTable({
             <tr>
               <th>No</th>
               <th>Nama Warga</th>
-              <th>Nomor Rumah</th>
               <th>Dawis</th>
               <th>Status Tinggal</th>
               <th>Total Kegiatan</th>
@@ -38,7 +37,6 @@ export function AttendanceSummaryTable({
                 <td>
                   <strong>{row.nama}</strong>
                 </td>
-                <td>{row.nomor_rumah}</td>
                 <td>Dawis {row.dawis}</td>
                 <td>{row.status_tinggal}</td>
                 <td>{row.total_kegiatan}</td>
@@ -62,7 +60,7 @@ export function AttendanceSummaryTable({
             <div className="mobile-data-header">
               <div>
                 <strong>{index + 1}. {row.nama}</strong>
-                <p className="helper-text">Dawis {row.dawis} | Rumah {row.nomor_rumah || "-"}</p>
+                <p className="helper-text">Dawis {row.dawis}</p>
               </div>
               <AttendanceCategoryBadge category={row.kategori_kehadiran} />
             </div>
