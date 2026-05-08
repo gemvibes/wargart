@@ -1888,7 +1888,7 @@ a.quick-list-item::after {
 
   .login-hero {
     min-height: auto;
-    gap: 8px;
+    gap: 10px;
   }
 
   .login-hero h1 {
@@ -1947,17 +1947,37 @@ a.quick-list-item::after {
   }
 
   .login-value-stack {
-    display: none;
+    display: block;
   }
 
   .login-value-list {
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 
   .login-value-item {
     min-height: 0;
-    padding: 12px 14px;
-    font-size: 0.88rem;
+    gap: 8px;
+    padding: 7px 9px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  .login-value-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .login-value-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .login-role-grid,
+  .login-hero-footer {
+    display: none;
   }
 
   .dashboard-feature-card,
