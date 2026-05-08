@@ -105,6 +105,14 @@ export const apiClient = {
   updateWarga: (warga_id: string, payload: WargaPayload) =>
     postRequest<Warga>("updateWarga", { warga_id, ...payload }),
   deleteWarga: (warga_id: string) => postRequest<boolean>("deleteWarga", { warga_id }),
+  importWargaBatch: (rows: Array<Record<string, unknown>>) =>
+    postRequest<{
+      imported: number;
+      created: number;
+      updated: number;
+      skipped: number;
+      items: Array<Record<string, unknown>>;
+    }>("importWargaBatch", { rows }),
   getKegiatan: (params?: Record<string, string | undefined>) =>
     getRequest<Kegiatan[]>("getKegiatan", params),
   getKegiatanDetail: (kegiatan_id: string) =>

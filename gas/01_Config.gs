@@ -44,6 +44,13 @@ const SETUP_INPUT = {
       password: "ketua123",
       role: "viewer",
       status: "Aktif"
+    },
+    {
+      nama: "Warga RT",
+      username: "warga",
+      password: "warga123",
+      role: "viewer",
+      status: "Aktif"
     }
   ]
 };

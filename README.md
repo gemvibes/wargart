@@ -379,6 +379,52 @@ Masukkan hasil hash ke kolom `password_hash` di sheet `users`.
 - Rekap bisa difilter berdasarkan nama, Dawis, status tinggal, kategori, jenis kegiatan, dan rentang tanggal
 - Export rekap untuk MVP menggunakan CSV dari frontend
 
+## Import Data Warga dari File Lokal
+
+Project ini menyediakan importer lokal untuk membaca file Excel sumber lalu mengirim batch ke Google Apps Script.
+
+File sumber default saat ini:
+
+- [E:/WargaRT/Database_fix.xlsx](</E:/WargaRT/Database_fix.xlsx>)
+
+Script importer:
+
+- [E:/WargaRT/scripts/import-warga.mjs](</E:/WargaRT/scripts/import-warga.mjs:1>)
+
+Install dependency jika belum:
+
+```powershell
+npm.cmd install
+```
+
+Dry run untuk melihat jumlah data yang akan diimpor:
+
+```powershell
+npm.cmd run import:warga -- --dry-run
+```
+
+Impor sungguhan memakai akun superadmin default:
+
+```powershell
+npm.cmd run import:warga -- --username sekretaris --password admin123
+```
+
+Jika file sumber berbeda:
+
+```powershell
+npm.cmd run import:warga -- --file "NamaFile.xlsx" --username sekretaris --password admin123
+```
+
+Aturan mapping importer saat ini:
+
+- Hanya baris dengan `Jenis subjek = Warga` yang diimpor
+- Baris `Toko` dilewati agar tetap sesuai scope aplikasi warga
+- `Kontrak/Sementara` dipetakan menjadi `Kontrak`
+- `Usaha/Toko` tidak diimpor ke sheet `warga`
+- `Jumlah anggota KK` kosong akan menjadi `0`
+- Jika `warga_id` sudah ada di spreadsheet, data akan di-`update`
+- Jika `warga_id` belum ada, data akan di-`create`
+
 ## Catatan Implementasi MVP
 
 - Frontend menyimpan token sederhana di `localStorage`

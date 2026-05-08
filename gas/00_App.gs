@@ -52,6 +52,8 @@ function routePostAction_(action, body, payload) {
       return updateWarga_(body, payload);
     case "deleteWarga":
       return deleteWarga_(body, payload);
+    case "importWargaBatch":
+      return importWargaBatch_(body, payload);
     case "createKegiatan":
       return createKegiatan_(body, payload);
     case "updateKegiatan":

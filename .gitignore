@@ -6,6 +6,9 @@ dist
 .env.local
 .env.*.local
 .clasp.json
+.dev.*.log
+~$*.xlsx
+Database_fix.copy.xlsx
 coverage
 npm-debug.log*
 yarn-debug.log*
