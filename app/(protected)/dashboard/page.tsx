@@ -124,7 +124,7 @@ export default function DashboardPage() {
                 </div>
                 <strong>{featuredKegiatan.nama_kegiatan}</strong>
                 <p>
-                  {formatDate(featuredKegiatan.tanggal)} • {featuredKegiatan.tempat}
+                  {formatDate(featuredKegiatan.tanggal)} | {featuredKegiatan.tempat}
                 </p>
               </Link>
 
@@ -135,7 +135,7 @@ export default function DashboardPage() {
                       <div>
                         <strong>{item.nama_kegiatan}</strong>
                         <p>
-                          {item.jenis_kegiatan} • {formatDate(item.tanggal)}
+                          {item.jenis_kegiatan} | {formatDate(item.tanggal)}
                         </p>
                       </div>
                       <span className={`badge ${item.status_kegiatan === "Final" ? "green" : "yellow"}`}>
@@ -181,37 +181,37 @@ export default function DashboardPage() {
                 <strong>{warga.length}</strong>
               </div>
             </div>
-          </div>
 
-          <div className="card dashboard-links-card">
-            <div className="dashboard-section-header">
+            <div className="dashboard-summary-divider" />
+
+            <div className="dashboard-section-header dashboard-section-header-compact">
               <div>
                 <span className="dashboard-section-eyebrow">Akses Cepat</span>
                 <h3>Menu Utama</h3>
               </div>
             </div>
 
-            <div className="dashboard-link-list">
-              <Link className="dashboard-link-card" href="/warga">
+            <div className="dashboard-shortcut-list">
+              <Link className="dashboard-shortcut-card" href="/warga">
                 <div>
                   <strong>Data Warga</strong>
                   <p>Lihat, cari, dan kelola data warga RT.</p>
                 </div>
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true">-&gt;</span>
               </Link>
-              <Link className="dashboard-link-card" href="/kegiatan">
+              <Link className="dashboard-shortcut-card" href="/kegiatan">
                 <div>
                   <strong>Daftar Kegiatan</strong>
                   <p>Kelola jadwal, daftar hadir, dan laporan kegiatan.</p>
                 </div>
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true">-&gt;</span>
               </Link>
-              <Link className="dashboard-link-card" href="/rekap-kehadiran">
+              <Link className="dashboard-shortcut-card" href="/rekap-kehadiran">
                 <div>
                   <strong>Rekap Kehadiran</strong>
                   <p>Lihat tingkat kehadiran warga berdasarkan kegiatan final.</p>
                 </div>
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true">-&gt;</span>
               </Link>
             </div>
           </div>

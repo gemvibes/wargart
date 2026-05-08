@@ -83,9 +83,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="sidebar-footer">
           <div className="sidebar-footer-copy">
             <strong>{user?.nama}</strong>
-            <p className="helper-text">Role: {user?.role === "superadmin" ? "Superadmin" : "Viewer"}</p>
+            <p className="helper-text sidebar-role">{user?.role === "superadmin" ? "Superadmin" : "Viewer"}</p>
           </div>
-          <button className="button secondary" onClick={logout} type="button">
+          <button className="button secondary sidebar-logout" onClick={logout} type="button">
             Keluar
           </button>
         </div>
