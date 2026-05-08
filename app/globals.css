@@ -804,6 +804,41 @@ img {
   background: #fbfefd;
 }
 
+.warga-table-wrap {
+  margin-top: 4px;
+}
+
+.warga-table {
+  min-width: 880px;
+}
+
+.warga-col-name {
+  min-width: 220px;
+}
+
+.warga-col-action {
+  min-width: 156px;
+}
+
+.warga-name-cell strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-strong);
+}
+
+.warga-name-cell .helper-text {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.warga-action-cell {
+  min-width: 156px;
+}
+
+.warga-action-row {
+  flex-wrap: nowrap;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -1619,6 +1654,10 @@ a.quick-list-item::after {
     width: 100%;
   }
 
+  .warga-action-row .button {
+    width: auto;
+  }
+
   .main-content {
     padding-bottom: calc(118px + env(safe-area-inset-bottom));
   }
@@ -1662,6 +1701,58 @@ a.quick-list-item::after {
 
   .login-screen {
     padding: 16px;
+  }
+
+  .warga-table-wrap {
+    margin-left: -6px;
+    margin-right: -6px;
+    border-radius: 20px;
+  }
+
+  .warga-table {
+    min-width: 760px;
+  }
+
+  .warga-table th,
+  .warga-table td {
+    padding: 12px 12px;
+  }
+
+  .warga-table thead th {
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+  }
+
+  .warga-table tbody td,
+  .warga-table .helper-text,
+  .warga-table .badge,
+  .warga-action-row .button {
+    font-size: 0.76rem;
+  }
+
+  .warga-name-cell strong {
+    margin-bottom: 4px;
+    font-size: 0.84rem;
+    line-height: 1.32;
+  }
+
+  .warga-col-name {
+    min-width: 190px;
+  }
+
+  .warga-col-action,
+  .warga-action-cell {
+    min-width: 132px;
+  }
+
+  .warga-action-row {
+    gap: 6px;
+  }
+
+  .warga-action-row .button {
+    min-height: 32px;
+    padding: 0 10px;
+    border-radius: 9px;
   }
 
   .login-shell {

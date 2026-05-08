@@ -163,7 +163,7 @@ export default function WargaPage() {
           <>
             <div className="list-toolbar">
               <p className="helper-text">
-                Total {warga.length} data warga. Gunakan gulir untuk melihat daftar lainnya.
+                Total {warga.length} data warga. Gunakan gulir horizontal di layar kecil untuk melihat kolom lengkap.
               </p>
               <div className="list-size-control">
                 <label htmlFor="warga-visible-count">Tampilkan</label>
@@ -179,36 +179,36 @@ export default function WargaPage() {
               </div>
             </div>
 
-            <div className="desktop-only scroll-surface table-wrap" style={listStyle}>
-              <table className="table">
+            <div className="scroll-surface table-wrap warga-table-wrap" style={listStyle}>
+              <table className="table warga-table">
                 <thead>
                   <tr>
-                    <th>Nama</th>
+                    <th className="warga-col-name">Nama</th>
                     <th>Nomor Rumah</th>
                     <th>Dawis</th>
                     <th>Status Tinggal</th>
                     <th>Status</th>
                     <th>Jumlah KK</th>
-                    <th>Aksi</th>
+                    <th className="warga-col-action">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {warga.map((item) => (
                     <tr key={item.warga_id}>
-                      <td>
+                      <td className="warga-name-cell">
                         <strong>{item.nama}</strong>
                         {item.catatan ? <div className="helper-text">{item.catatan}</div> : null}
                       </td>
-                      <td>{item.nomor_rumah}</td>
-                      <td>Dawis {item.dawis}</td>
-                      <td>{item.status_tinggal}</td>
+                      <td>{item.nomor_rumah || "-"}</td>
+                      <td>{item.dawis ? `Dawis ${item.dawis}` : "-"}</td>
+                      <td>{item.status_tinggal || "-"}</td>
                       <td>
                         <span className={`badge ${item.status === "Aktif" ? "green" : "yellow"}`}>{item.status}</span>
                       </td>
                       <td>{item.jumlah_anggota_kk}</td>
-                      <td>
+                      <td className="warga-action-cell">
                         <RoleGuard allow="superadmin" fallback={<span className="helper-text">Lihat saja</span>}>
-                          <div className="actions-row">
+                          <div className="actions-row warga-action-row">
                             <button
                               className="button secondary"
                               onClick={() => {
@@ -233,57 +233,6 @@ export default function WargaPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-
-            <div className="mobile-only mobile-card-list scroll-surface" style={listStyle}>
-              {warga.map((item) => (
-                <article className="mobile-data-card" key={item.warga_id}>
-                  <div className="mobile-data-header">
-                    <div>
-                      <strong>{item.nama}</strong>
-                      <p className="helper-text">{item.catatan || "Data warga RT"}</p>
-                    </div>
-                    <span className={`badge ${item.status === "Aktif" ? "green" : "yellow"}`}>{item.status}</span>
-                  </div>
-
-                  <div className="mobile-data-body">
-                    <div className="mobile-data-row">
-                      <span className="mobile-data-label">Nomor Rumah</span>
-                      <span>{item.nomor_rumah || "-"}</span>
-                    </div>
-                    <div className="mobile-data-row">
-                      <span className="mobile-data-label">Dawis</span>
-                      <span>Dawis {item.dawis || "-"}</span>
-                    </div>
-                    <div className="mobile-data-row">
-                      <span className="mobile-data-label">Status Tinggal</span>
-                      <span>{item.status_tinggal || "-"}</span>
-                    </div>
-                    <div className="mobile-data-row">
-                      <span className="mobile-data-label">Jumlah KK</span>
-                      <span>{item.jumlah_anggota_kk}</span>
-                    </div>
-                  </div>
-
-                  <RoleGuard allow="superadmin" fallback={<span className="helper-text">Mode lihat saja</span>}>
-                    <div className="mobile-data-actions">
-                      <button
-                        className="button secondary"
-                        onClick={() => {
-                          setSelected(item);
-                          setModalOpen(true);
-                        }}
-                        type="button"
-                      >
-                        Edit
-                      </button>
-                      <button className="button danger" onClick={() => handleDelete(item.warga_id)} type="button">
-                        Hapus
-                      </button>
-                    </div>
-                  </RoleGuard>
-                </article>
-              ))}
             </div>
           </>
         ) : null}
