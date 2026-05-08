@@ -1538,6 +1538,14 @@ a.quick-list-item::after {
   display: none !important;
 }
 
+.rekap-desktop-list {
+  display: block !important;
+}
+
+.rekap-mobile-list {
+  display: none !important;
+}
+
 .activity-detail-grid > .card {
   height: 100%;
 }
@@ -1803,6 +1811,14 @@ a.quick-list-item::after {
     display: grid !important;
   }
 
+  .rekap-desktop-list {
+    display: none !important;
+  }
+
+  .rekap-mobile-list {
+    display: grid !important;
+  }
+
   .list-toolbar {
     align-items: stretch;
     flex-direction: column;
@@ -1851,42 +1867,87 @@ a.quick-list-item::after {
   }
 
   .login-screen {
-    padding: 16px;
+    min-height: 100dvh;
+    padding: 10px;
   }
 
   .login-shell {
-    min-height: calc(100vh - 32px);
+    min-height: calc(100dvh - 20px);
   }
 
   .login-card {
-    border-radius: 28px;
+    grid-template-rows: auto minmax(0, 1fr);
+    max-height: calc(100dvh - 20px);
+    border-radius: 22px;
   }
 
   .login-hero,
   .login-panel {
-    padding: 24px;
+    padding: 16px;
   }
 
   .login-hero {
     min-height: auto;
-    gap: 16px;
+    gap: 8px;
   }
 
   .login-hero h1 {
-    font-size: clamp(2.35rem, 1.9rem + 4vw, 3rem);
+    margin-bottom: 6px;
+    font-size: clamp(1.95rem, 1.45rem + 5vw, 2.45rem);
   }
 
   .login-hero-copy > p,
   .login-panel .muted {
-    font-size: 0.95rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
   }
 
   .login-panel h2 {
-    font-size: clamp(2rem, 1.65rem + 3vw, 2.45rem);
+    font-size: clamp(1.58rem, 1.25rem + 3vw, 1.9rem);
+  }
+
+  .login-panel {
+    align-items: start;
+  }
+
+  .login-panel-inner {
+    gap: 14px;
+  }
+
+  .login-panel-header {
+    gap: 6px;
+  }
+
+  .login-panel-eyebrow {
+    font-size: 0.68rem;
+  }
+
+  .login-form {
+    gap: 12px;
+  }
+
+  .login-field {
+    gap: 6px;
+  }
+
+  .login-field label,
+  .login-support {
+    font-size: 0.78rem;
+  }
+
+  .login-input,
+  .login-submit {
+    min-height: 42px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+  }
+
+  .login-credit {
+    font-size: 0.72rem;
   }
 
   .login-value-stack {
-    gap: 12px;
+    display: none;
   }
 
   .login-value-list {
@@ -1897,12 +1958,6 @@ a.quick-list-item::after {
     min-height: 0;
     padding: 12px 14px;
     font-size: 0.88rem;
-  }
-
-  .login-value-item:nth-child(3),
-  .login-role-grid,
-  .login-hero-footer {
-    display: none;
   }
 
   .dashboard-feature-card,
@@ -1937,6 +1992,7 @@ a.quick-list-item::after {
 
   .warga-mobile-list {
     gap: 8px;
+    padding: 8px;
   }
 
   .warga-mobile-card {

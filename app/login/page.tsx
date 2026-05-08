@@ -99,7 +99,7 @@ function LoginContent() {
           <section className="login-panel">
             <div className="login-panel-inner">
               <div className="login-panel-header">
-                <span className="login-panel-eyebrow">Secure Workspace Access</span>
+                <span className="login-panel-eyebrow">RT 03/ RW 03 ONLY</span>
                 <h2>Masuk ke {APP_NAME}</h2>
                 <p className="muted">Gunakan username dan password yang telah diberikan oleh admin.</p>
               </div>

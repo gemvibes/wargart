@@ -76,6 +76,7 @@ export default function WargaPage() {
   const activeCount = useMemo(() => warga.filter((item) => item.status === "Aktif").length, [warga]);
   const listHeight = visibleCount === 10 ? 680 : 1160;
   const listStyle = { maxHeight: listHeight } as CSSProperties;
+  const mobileListStyle = { maxHeight: visibleCount === 10 ? 460 : 720 } as CSSProperties;
 
   return (
     <div className="section-stack">
@@ -235,7 +236,7 @@ export default function WargaPage() {
               </table>
             </div>
 
-            <div className="mobile-only warga-mobile-list" style={listStyle}>
+            <div className="mobile-only warga-mobile-list scroll-surface" style={mobileListStyle}>
               {warga.map((item) => (
                 <article className="warga-mobile-card" key={item.warga_id}>
                   <div className="warga-mobile-head">

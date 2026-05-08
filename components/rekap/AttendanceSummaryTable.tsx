@@ -15,7 +15,7 @@ export function AttendanceSummaryTable({
 
   return (
     <div className="card">
-      <div className="desktop-only scroll-surface table-wrap" style={listStyle}>
+      <div className="rekap-desktop-list scroll-surface table-wrap" style={listStyle}>
         <table className="table">
           <thead>
             <tr>
@@ -56,7 +56,7 @@ export function AttendanceSummaryTable({
         </table>
       </div>
 
-      <div className="mobile-only mobile-card-list scroll-surface" style={listStyle}>
+      <div className="rekap-mobile-list mobile-card-list scroll-surface" style={listStyle}>
         {rows.map((row, index) => (
           <article className="mobile-data-card" key={row.warga_id}>
             <div className="mobile-data-header">

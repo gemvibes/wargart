@@ -57,6 +57,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
+          <span className="brand-eyebrow">RT 03 / RW 03</span>
           <h1>{APP_NAME}</h1>
           <p>{APP_TAGLINE}</p>
         </div>
