@@ -288,6 +288,11 @@ img {
   gap: 22px;
 }
 
+.dashboard-stack {
+  display: grid;
+  gap: 22px;
+}
+
 .stat-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
@@ -357,6 +362,178 @@ img {
 .helper-text {
   font-size: 0.85rem;
   color: var(--text-soft);
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.dashboard-side-column,
+.dashboard-feature-body,
+.dashboard-compact-list,
+.dashboard-link-list {
+  display: grid;
+  gap: 14px;
+}
+
+.dashboard-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.dashboard-section-header h3 {
+  margin: 4px 0 0;
+  font-size: 1.18rem;
+}
+
+.dashboard-section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.dashboard-inline-link {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.dashboard-feature-card,
+.dashboard-summary-card,
+.dashboard-links-card {
+  padding: 24px;
+}
+
+.dashboard-highlight-card,
+.dashboard-compact-item,
+.dashboard-link-card,
+.dashboard-mini-item {
+  border: 1px solid #e3ece9;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+}
+
+.dashboard-highlight-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dashboard-highlight-card:hover,
+.dashboard-compact-item:hover,
+.dashboard-link-card:hover {
+  border-color: #cfe1dc;
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.05);
+  transform: translateY(-1px);
+}
+
+.dashboard-highlight-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.dashboard-highlight-card strong,
+.dashboard-compact-item strong,
+.dashboard-link-card strong {
+  display: block;
+  color: var(--text-strong);
+}
+
+.dashboard-highlight-card strong {
+  font-size: clamp(1.25rem, 1.1rem + 0.3vw, 1.4rem);
+  line-height: 1.18;
+}
+
+.dashboard-highlight-card p,
+.dashboard-compact-item p,
+.dashboard-link-card p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.dashboard-highlight-card p {
+  font-size: 0.92rem;
+}
+
+.dashboard-compact-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.dashboard-compact-item p {
+  margin-top: 6px;
+  font-size: 0.86rem;
+}
+
+.dashboard-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dashboard-mini-item {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+}
+
+.dashboard-mini-item span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.dashboard-mini-item strong {
+  font-size: 1.45rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+
+.dashboard-link-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px;
+}
+
+.dashboard-link-card span[aria-hidden="true"] {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #9aa8b6;
 }
 
 .toolbar {
@@ -1311,6 +1488,10 @@ a.quick-list-item::after {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
   .login-card {
     min-height: auto;
   }
@@ -1498,7 +1679,7 @@ a.quick-list-item::after {
 
   .login-hero {
     min-height: auto;
-    gap: 22px;
+    gap: 16px;
   }
 
   .login-hero h1 {
@@ -1510,12 +1691,45 @@ a.quick-list-item::after {
     font-size: 0.95rem;
   }
 
-  .login-role-grid {
-    grid-template-columns: 1fr;
-  }
-
   .login-panel h2 {
     font-size: clamp(2rem, 1.65rem + 3vw, 2.45rem);
+  }
+
+  .login-value-stack {
+    gap: 12px;
+  }
+
+  .login-value-list {
+    gap: 10px;
+  }
+
+  .login-value-item {
+    min-height: 0;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+  }
+
+  .login-value-item:nth-child(3),
+  .login-role-grid,
+  .login-hero-footer {
+    display: none;
+  }
+
+  .dashboard-feature-card,
+  .dashboard-summary-card,
+  .dashboard-links-card {
+    padding: 20px;
+  }
+
+  .dashboard-section-header,
+  .dashboard-highlight-top,
+  .dashboard-compact-item,
+  .dashboard-link-card {
+    display: grid;
+  }
+
+  .dashboard-mini-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
 }

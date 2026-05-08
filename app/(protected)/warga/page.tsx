@@ -10,8 +10,6 @@ import { WargaFormModal } from "@/components/warga/WargaFormModal";
 import { DAWIS_OPTIONS, STATUS_TINGGAL_OPTIONS } from "@/lib/constants";
 import { apiClient } from "@/lib/api/client";
 import { Warga, WargaPayload } from "@/lib/types";
-import { formatDateTime } from "@/lib/utils";
-
 export default function WargaPage() {
   const [warga, setWarga] = useState<Warga[]>([]);
   const [loading, setLoading] = useState(true);
@@ -191,7 +189,6 @@ export default function WargaPage() {
                     <th>Status Tinggal</th>
                     <th>Status</th>
                     <th>Jumlah KK</th>
-                    <th>Diperbarui</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -209,7 +206,6 @@ export default function WargaPage() {
                         <span className={`badge ${item.status === "Aktif" ? "green" : "yellow"}`}>{item.status}</span>
                       </td>
                       <td>{item.jumlah_anggota_kk}</td>
-                      <td>{formatDateTime(item.updated_at || item.created_at)}</td>
                       <td>
                         <RoleGuard allow="superadmin" fallback={<span className="helper-text">Lihat saja</span>}>
                           <div className="actions-row">
@@ -266,10 +262,6 @@ export default function WargaPage() {
                     <div className="mobile-data-row">
                       <span className="mobile-data-label">Jumlah KK</span>
                       <span>{item.jumlah_anggota_kk}</span>
-                    </div>
-                    <div className="mobile-data-row">
-                      <span className="mobile-data-label">Diperbarui</span>
-                      <span>{formatDateTime(item.updated_at || item.created_at)}</span>
                     </div>
                   </div>
 

@@ -48,6 +48,13 @@ export default function DashboardPage() {
         .slice(0, 5),
     [kegiatan]
   );
+  const wargaAktif = useMemo(() => warga.filter((item) => item.status === "Aktif").length, [warga]);
+  const kegiatanFinal = useMemo(
+    () => kegiatan.filter((item) => item.status_kegiatan === "Final").length,
+    [kegiatan]
+  );
+  const featuredKegiatan = kegiatanTerbaru[0] ?? null;
+  const recentKegiatan = featuredKegiatan ? kegiatanTerbaru.slice(1, 4) : [];
 
   if (loading) {
     return <LoadingState message="Memuat ringkasan dashboard..." />;
@@ -58,10 +65,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div>
+    <div className="dashboard-stack">
       <PageHeader
         title={`Halo, ${user?.nama ?? "Pengguna"}`}
-        description="Pantau data warga, kegiatan, dan progres administrasi RT dari satu tempat."
+        description="Pantau administrasi RT dari tampilan yang lebih ringkas, jelas, dan siap dipakai setiap hari."
         actions={
           <RoleGuard allow="superadmin">
             <Link className="button primary" href="/warga">
@@ -74,11 +81,11 @@ export default function DashboardPage() {
         }
       />
 
-      <section className="stat-grid">
+      <section className="stat-grid dashboard-stat-grid">
         <StatCard
           hint="Hanya menghitung warga dengan status Aktif."
           label="Jumlah Warga Aktif"
-          value={warga.filter((item) => item.status === "Aktif").length}
+          value={wargaAktif}
         />
         <StatCard
           hint="Total kegiatan yang sudah tercatat."
@@ -88,52 +95,125 @@ export default function DashboardPage() {
         <StatCard
           hint="Kegiatan dengan status Final akan masuk rekap kehadiran."
           label="Kegiatan Final"
-          value={kegiatan.filter((item) => item.status_kegiatan === "Final").length}
+          value={kegiatanFinal}
         />
       </section>
 
-      <section className="detail-grid">
-        <div className="card">
-          <h3>Kegiatan Terbaru</h3>
-          {kegiatanTerbaru.length === 0 ? (
+      <section className="dashboard-layout">
+        <div className="card dashboard-feature-card">
+          <div className="dashboard-section-header">
+            <div>
+              <span className="dashboard-section-eyebrow">Ringkasan Aktivitas</span>
+              <h3>Kegiatan Terbaru</h3>
+            </div>
+            {featuredKegiatan ? (
+              <Link className="dashboard-inline-link" href={`/kegiatan/${featuredKegiatan.kegiatan_id}`}>
+                Buka detail
+              </Link>
+            ) : null}
+          </div>
+
+          {featuredKegiatan ? (
+            <div className="dashboard-feature-body">
+              <Link className="dashboard-highlight-card" href={`/kegiatan/${featuredKegiatan.kegiatan_id}`}>
+                <div className="dashboard-highlight-top">
+                  <span className="dashboard-kicker">{featuredKegiatan.jenis_kegiatan}</span>
+                  <span className={`badge ${featuredKegiatan.status_kegiatan === "Final" ? "green" : "yellow"}`}>
+                    {featuredKegiatan.status_kegiatan}
+                  </span>
+                </div>
+                <strong>{featuredKegiatan.nama_kegiatan}</strong>
+                <p>
+                  {formatDate(featuredKegiatan.tanggal)} • {featuredKegiatan.tempat}
+                </p>
+              </Link>
+
+              {recentKegiatan.length > 0 ? (
+                <div className="dashboard-compact-list">
+                  {recentKegiatan.map((item) => (
+                    <Link className="dashboard-compact-item" href={`/kegiatan/${item.kegiatan_id}`} key={item.kegiatan_id}>
+                      <div>
+                        <strong>{item.nama_kegiatan}</strong>
+                        <p>
+                          {item.jenis_kegiatan} • {formatDate(item.tanggal)}
+                        </p>
+                      </div>
+                      <span className={`badge ${item.status_kegiatan === "Final" ? "green" : "yellow"}`}>
+                        {item.status_kegiatan}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : (
             <EmptyState
               description="Belum ada kegiatan yang tersimpan. Tambahkan kegiatan baru untuk mulai mencatat aktivitas warga."
               title="Belum ada kegiatan"
             />
-          ) : (
-            <div className="quick-list">
-              {kegiatanTerbaru.map((item) => (
-                <Link className="quick-list-item" href={`/kegiatan/${item.kegiatan_id}`} key={item.kegiatan_id}>
-                  <div className="inline-between">
-                    <strong>{item.nama_kegiatan}</strong>
-                    <span className={`badge ${item.status_kegiatan === "Final" ? "green" : "yellow"}`}>
-                      {item.status_kegiatan}
-                    </span>
-                  </div>
-                  <p className="helper-text">
-                    {item.jenis_kegiatan} • {formatDate(item.tanggal)} • {item.tempat}
-                  </p>
-                </Link>
-              ))}
-            </div>
           )}
         </div>
 
-        <div className="card">
-          <h3>Akses Cepat</h3>
-          <div className="quick-list">
-            <Link className="quick-list-item" href="/warga">
-              <strong>Data Warga</strong>
-              <p className="helper-text">Lihat, cari, dan kelola data warga RT.</p>
-            </Link>
-            <Link className="quick-list-item" href="/kegiatan">
-              <strong>Daftar Kegiatan</strong>
-              <p className="helper-text">Kelola jadwal, daftar hadir, dan laporan kegiatan.</p>
-            </Link>
-            <Link className="quick-list-item" href="/rekap-kehadiran">
-              <strong>Rekap Kehadiran</strong>
-              <p className="helper-text">Lihat tingkat kehadiran warga berdasarkan kegiatan Final.</p>
-            </Link>
+        <div className="dashboard-side-column">
+          <div className="card dashboard-summary-card">
+            <div className="dashboard-section-header">
+              <div>
+                <span className="dashboard-section-eyebrow">Status Hari Ini</span>
+                <h3>Ringkasan Administrasi</h3>
+              </div>
+            </div>
+
+            <div className="dashboard-mini-grid">
+              <div className="dashboard-mini-item">
+                <span>Warga Aktif</span>
+                <strong>{wargaAktif}</strong>
+              </div>
+              <div className="dashboard-mini-item">
+                <span>Kegiatan Final</span>
+                <strong>{kegiatanFinal}</strong>
+              </div>
+              <div className="dashboard-mini-item">
+                <span>Total Kegiatan</span>
+                <strong>{kegiatan.length}</strong>
+              </div>
+              <div className="dashboard-mini-item">
+                <span>Data Warga</span>
+                <strong>{warga.length}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="card dashboard-links-card">
+            <div className="dashboard-section-header">
+              <div>
+                <span className="dashboard-section-eyebrow">Akses Cepat</span>
+                <h3>Menu Utama</h3>
+              </div>
+            </div>
+
+            <div className="dashboard-link-list">
+              <Link className="dashboard-link-card" href="/warga">
+                <div>
+                  <strong>Data Warga</strong>
+                  <p>Lihat, cari, dan kelola data warga RT.</p>
+                </div>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link className="dashboard-link-card" href="/kegiatan">
+                <div>
+                  <strong>Daftar Kegiatan</strong>
+                  <p>Kelola jadwal, daftar hadir, dan laporan kegiatan.</p>
+                </div>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link className="dashboard-link-card" href="/rekap-kehadiran">
+                <div>
+                  <strong>Rekap Kehadiran</strong>
+                  <p>Lihat tingkat kehadiran warga berdasarkan kegiatan final.</p>
+                </div>
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
