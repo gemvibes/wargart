@@ -112,7 +112,7 @@ img {
 }
 
 .brand h1 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   font-size: 1.72rem;
   line-height: 1.05;
 }
@@ -378,12 +378,11 @@ img {
 
 .dashboard-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.52fr) minmax(300px, 0.82fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
 
-.dashboard-side-column,
 .dashboard-feature-body,
 .dashboard-compact-list,
 .dashboard-link-list {
@@ -421,7 +420,6 @@ img {
 }
 
 .dashboard-feature-card,
-.dashboard-summary-card,
 .dashboard-links-card {
   padding: 24px;
 }
@@ -519,31 +517,6 @@ img {
 .dashboard-compact-item p {
   margin-top: 6px;
   font-size: 0.86rem;
-}
-
-.dashboard-mini-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.dashboard-mini-item {
-  display: grid;
-  gap: 8px;
-  padding: 16px 18px;
-}
-
-.dashboard-mini-item span {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-soft);
-}
-
-.dashboard-mini-item strong {
-  font-size: 1.45rem;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--text-strong);
 }
 
 .toolbar {
@@ -1865,7 +1838,6 @@ a.quick-list-item::after {
   }
 
   .dashboard-feature-card,
-  .dashboard-summary-card,
   .dashboard-links-card {
     padding: 18px;
   }
@@ -1893,10 +1865,6 @@ a.quick-list-item::after {
 
   .summary-grid > .card h3 {
     font-size: 1.28rem;
-  }
-
-  .dashboard-mini-grid {
-    grid-template-columns: 1fr;
   }
 
   .warga-mobile-list {

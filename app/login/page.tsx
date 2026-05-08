@@ -61,7 +61,6 @@ function LoginContent() {
         <div className="login-card">
           <section className="login-hero">
             <div className="login-hero-copy">
-              <span className="brand-eyebrow">Modern Community Administration</span>
               <h1>{APP_NAME}</h1>
               <p>{APP_TAGLINE}</p>
             </div>

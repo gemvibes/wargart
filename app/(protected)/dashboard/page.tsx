@@ -142,31 +142,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="dashboard-side-column">
-          <div className="card dashboard-summary-card">
-            <div className="dashboard-section-header">
-              <div>
-                <span className="dashboard-section-eyebrow">Status Hari Ini</span>
-                <h3>Ringkasan Administrasi</h3>
-              </div>
-            </div>
-
-            <div className="dashboard-mini-grid">
-              <div className="dashboard-mini-item">
-                <span>Kegiatan Final</span>
-                <strong>{kegiatanFinal}</strong>
-              </div>
-              <div className="dashboard-mini-item">
-                <span>Total Kegiatan</span>
-                <strong>{kegiatan.length}</strong>
-              </div>
-              <div className="dashboard-mini-item">
-                <span>Data Warga</span>
-                <strong>{warga.length}</strong>
-              </div>
-            </div>
-          </div>
-        </div>
       </section>
     </div>
   );
