@@ -378,7 +378,7 @@ img {
 
 .dashboard-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.42fr) minmax(340px, 0.88fr);
+  grid-template-columns: minmax(0, 1.52fr) minmax(300px, 0.82fr);
   gap: 18px;
   align-items: start;
 }
@@ -424,6 +424,18 @@ img {
 .dashboard-summary-card,
 .dashboard-links-card {
   padding: 24px;
+}
+
+.dashboard-stat-grid .stat-card {
+  padding-bottom: 18px;
+}
+
+.dashboard-stat-grid .stat-card-label {
+  margin-bottom: 10px;
+}
+
+.dashboard-stat-grid .stat-card-hint {
+  display: none;
 }
 
 .dashboard-highlight-card,
@@ -511,7 +523,7 @@ img {
 
 .dashboard-mini-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
@@ -532,60 +544,6 @@ img {
   line-height: 1;
   letter-spacing: -0.04em;
   color: var(--text-strong);
-}
-
-.dashboard-summary-divider {
-  height: 1px;
-  margin: 4px 0 2px;
-  background: linear-gradient(90deg, rgba(215, 229, 226, 0), rgba(215, 229, 226, 0.9), rgba(215, 229, 226, 0));
-}
-
-.dashboard-section-header-compact {
-  margin-bottom: 14px;
-}
-
-.dashboard-shortcut-list {
-  display: grid;
-  gap: 10px;
-}
-
-.dashboard-shortcut-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid #e3ece9;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-
-.dashboard-shortcut-card:hover {
-  border-color: #cfe1dc;
-  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.05);
-  transform: translateY(-1px);
-}
-
-.dashboard-shortcut-card strong {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--text-strong);
-}
-
-.dashboard-shortcut-card p {
-  margin: 0;
-  font-size: 0.84rem;
-  color: var(--text-soft);
-}
-
-.dashboard-shortcut-card span[aria-hidden="true"] {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #9aa8b6;
 }
 
 .toolbar {
@@ -862,6 +820,20 @@ img {
 
 .warga-table {
   min-width: 880px;
+}
+
+.warga-table th,
+.warga-table td {
+  text-align: center;
+}
+
+.warga-table th.warga-col-name,
+.warga-table td.warga-name-cell {
+  text-align: left;
+}
+
+.warga-table tbody tr:nth-child(even) td {
+  background: #fbfdfc;
 }
 
 .warga-col-name {
@@ -1905,16 +1877,26 @@ a.quick-list-item::after {
     display: grid;
   }
 
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .summary-grid > .card {
+    padding: 16px 16px 14px;
+  }
+
+  .summary-grid > .card .muted {
+    margin-bottom: 8px;
+    font-size: 0.76rem;
+  }
+
+  .summary-grid > .card h3 {
+    font-size: 1.28rem;
+  }
+
   .dashboard-mini-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .dashboard-shortcut-card {
-    padding: 12px 14px;
-  }
-
-  .dashboard-shortcut-card p {
-    font-size: 0.8rem;
+    grid-template-columns: 1fr;
   }
 
   .warga-mobile-list {

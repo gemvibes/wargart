@@ -68,7 +68,7 @@ export default function DashboardPage() {
     <div className="dashboard-stack">
       <PageHeader
         title={`Halo, ${user?.nama ?? "Pengguna"}`}
-        description="Pantau administrasi RT dari tampilan yang lebih ringkas, jelas, dan siap dipakai setiap hari."
+        description="Pantau ringkasan administrasi RT dari satu tampilan."
         actions={
           <RoleGuard allow="superadmin">
             <Link className="button primary" href="/warga">
@@ -82,21 +82,9 @@ export default function DashboardPage() {
       />
 
       <section className="stat-grid dashboard-stat-grid">
-        <StatCard
-          hint="Hanya menghitung warga dengan status Aktif."
-          label="Jumlah Warga Aktif"
-          value={wargaAktif}
-        />
-        <StatCard
-          hint="Total kegiatan yang sudah tercatat."
-          label="Jumlah Kegiatan"
-          value={kegiatan.length}
-        />
-        <StatCard
-          hint="Kegiatan dengan status Final akan masuk rekap kehadiran."
-          label="Kegiatan Final"
-          value={kegiatanFinal}
-        />
+        <StatCard label="Jumlah Warga Aktif" value={wargaAktif} />
+        <StatCard label="Jumlah Kegiatan" value={kegiatan.length} />
+        <StatCard label="Kegiatan Final" value={kegiatanFinal} />
       </section>
 
       <section className="dashboard-layout">
@@ -165,10 +153,6 @@ export default function DashboardPage() {
 
             <div className="dashboard-mini-grid">
               <div className="dashboard-mini-item">
-                <span>Warga Aktif</span>
-                <strong>{wargaAktif}</strong>
-              </div>
-              <div className="dashboard-mini-item">
                 <span>Kegiatan Final</span>
                 <strong>{kegiatanFinal}</strong>
               </div>
@@ -180,39 +164,6 @@ export default function DashboardPage() {
                 <span>Data Warga</span>
                 <strong>{warga.length}</strong>
               </div>
-            </div>
-
-            <div className="dashboard-summary-divider" />
-
-            <div className="dashboard-section-header dashboard-section-header-compact">
-              <div>
-                <span className="dashboard-section-eyebrow">Akses Cepat</span>
-                <h3>Menu Utama</h3>
-              </div>
-            </div>
-
-            <div className="dashboard-shortcut-list">
-              <Link className="dashboard-shortcut-card" href="/warga">
-                <div>
-                  <strong>Data Warga</strong>
-                  <p>Lihat, cari, dan kelola data warga RT.</p>
-                </div>
-                <span aria-hidden="true">-&gt;</span>
-              </Link>
-              <Link className="dashboard-shortcut-card" href="/kegiatan">
-                <div>
-                  <strong>Daftar Kegiatan</strong>
-                  <p>Kelola jadwal, daftar hadir, dan laporan kegiatan.</p>
-                </div>
-                <span aria-hidden="true">-&gt;</span>
-              </Link>
-              <Link className="dashboard-shortcut-card" href="/rekap-kehadiran">
-                <div>
-                  <strong>Rekap Kehadiran</strong>
-                  <p>Lihat tingkat kehadiran warga berdasarkan kegiatan final.</p>
-                </div>
-                <span aria-hidden="true">-&gt;</span>
-              </Link>
             </div>
           </div>
         </div>

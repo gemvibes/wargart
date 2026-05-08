@@ -163,7 +163,7 @@ export default function WargaPage() {
           <>
             <div className="list-toolbar">
               <p className="helper-text">
-                Total {warga.length} data warga. Tampilan akan menyesuaikan perangkat agar tetap nyaman dibaca.
+                Total {warga.length} data warga.
               </p>
               <div className="list-size-control">
                 <label htmlFor="warga-visible-count">Tampilkan</label>
