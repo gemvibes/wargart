@@ -3,6 +3,7 @@
 import {
   ApiResponse,
   AttendanceItem,
+  DashboardSummary,
   ExportFilePayload,
   FotoKegiatan,
   Kegiatan,
@@ -19,6 +20,8 @@ import {
 
 const API_URL = process.env.NEXT_PUBLIC_GAS_API_URL;
 const TOKEN_STORAGE_KEY = "wargart_token";
+const GET_CACHE_TTL_MS = 20_000;
+const getRequestCache = new Map<string, { expiresAt: number; value: Promise<unknown> }>();
 
 function ensureApiUrl() {
   if (!API_URL) {
@@ -35,15 +38,29 @@ function getStoredToken() {
 export function storeToken(token: string) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  invalidateGetCache();
 }
 
 export function clearStoredToken() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+  invalidateGetCache();
 }
 
 export function readStoredToken() {
   return getStoredToken();
+}
+
+function buildGetCacheKey(action: string, params?: Record<string, string | undefined>) {
+  return JSON.stringify({
+    action,
+    token: getStoredToken(),
+    params: params ?? {}
+  });
+}
+
+function invalidateGetCache() {
+  getRequestCache.clear();
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -55,6 +72,12 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 async function getRequest<T>(action: string, params?: Record<string, string | undefined>) {
+  const cacheKey = buildGetCacheKey(action, params);
+  const cached = getRequestCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.value as Promise<T>;
+  }
+
   const url = new URL(ensureApiUrl());
   url.searchParams.set("action", action);
 
@@ -69,12 +92,22 @@ async function getRequest<T>(action: string, params?: Record<string, string | un
     }
   });
 
-  const response = await fetch(url.toString(), {
+  const request = fetch(url.toString(), {
     method: "GET",
     cache: "no-store"
+  }).then((response) => handleResponse<T>(response));
+
+  getRequestCache.set(cacheKey, {
+    expiresAt: Date.now() + GET_CACHE_TTL_MS,
+    value: request
   });
 
-  return handleResponse<T>(response);
+  try {
+    return await request;
+  } catch (error) {
+    getRequestCache.delete(cacheKey);
+    throw error;
+  }
 }
 
 async function postRequest<T>(action: string, payload?: object) {
@@ -92,7 +125,9 @@ async function postRequest<T>(action: string, payload?: object) {
     body: JSON.stringify(body)
   });
 
-  return handleResponse<T>(response);
+  const result = await handleResponse<T>(response);
+  invalidateGetCache();
+  return result;
 }
 
 export const apiClient = {
@@ -100,6 +135,7 @@ export const apiClient = {
   login: (username: string, password: string) =>
     postRequest<SessionPayload>("login", { username, password }),
   me: () => getRequest<User>("me"),
+  getDashboardSummary: () => getRequest<DashboardSummary>("getDashboardSummary"),
   getWarga: (params?: Record<string, string | undefined>) => getRequest<Warga[]>("getWarga", params),
   createWarga: (payload: WargaPayload) => postRequest<Warga>("createWarga", payload),
   updateWarga: (warga_id: string, payload: WargaPayload) =>

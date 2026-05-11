@@ -27,6 +27,8 @@ function routeGetAction_(action, e) {
   switch (action) {
     case "me":
       return getMe_(e);
+    case "getDashboardSummary":
+      return getDashboardSummary_(e);
     case "getWarga":
       return getWarga_(e);
     case "getKegiatan":

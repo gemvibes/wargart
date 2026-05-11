@@ -39,33 +39,119 @@ function saveKehadiran_(body, payload) {
   const attendance = (payload.attendance || []).filter(function (item) {
     return sanitizeText_(item.status_hadir) === "Hadir";
   });
+  const desiredByWargaId = attendance.reduce(function (map, item) {
+    const wargaId = getRequiredValue_(item.warga_id, "warga_id pada daftar hadir wajib diisi.");
+    map[wargaId] = {
+      warga_id: wargaId,
+      status_hadir: "Hadir",
+      catatan: sanitizeText_(item.catatan)
+    };
+    return map;
+  }, {});
 
-  const existingRows = readSheetAsObjects(CONFIG.SHEETS.KEHADIRAN);
-  const preservedRows = existingRows.filter(function (item) {
-    return String(item.kegiatan_id) !== kegiatanId;
-  });
+  const sheet = getSheet(CONFIG.SHEETS.KEHADIRAN);
+  const range = sheet.getDataRange();
+  const values = range.getValues();
+  const headers = values[0] || [];
 
-  var nextNumber = existingRows.reduce(function (maxValue, item) {
-    const currentId = String(item.hadir_id || "");
+  if (!headers.length) {
+    throw new Error("Header sheet kehadiran belum tersedia.");
+  }
+
+  const hadirIdIndex = headers.indexOf("hadir_id");
+  const kegiatanIdIndex = headers.indexOf("kegiatan_id");
+  const wargaIdIndex = headers.indexOf("warga_id");
+  const statusHadirIndex = headers.indexOf("status_hadir");
+  const catatanIndex = headers.indexOf("catatan");
+
+  if (
+    hadirIdIndex === -1 ||
+    kegiatanIdIndex === -1 ||
+    wargaIdIndex === -1 ||
+    statusHadirIndex === -1 ||
+    catatanIndex === -1
+  ) {
+    throw new Error("Struktur sheet kehadiran tidak lengkap.");
+  }
+
+  var nextNumber = 0;
+  const existingForKegiatan = [];
+
+  for (var rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
+    const row = values[rowIndex];
+    const currentId = String(row[hadirIdIndex] || "");
     const matched = currentId.match(/(\d+)$/);
     const numeric = matched ? Number(matched[1]) : 0;
-    return numeric > maxValue ? numeric : maxValue;
-  }, 0);
+    if (numeric > nextNumber) {
+      nextNumber = numeric;
+    }
 
-  const nextRows = attendance.map(function (item) {
+    if (String(row[kegiatanIdIndex]) === kegiatanId) {
+      existingForKegiatan.push({
+        rowNumber: rowIndex + 1,
+        hadir_id: currentId,
+        warga_id: String(row[wargaIdIndex] || ""),
+        catatan: sanitizeText_(row[catatanIndex])
+      });
+    }
+  }
+
+  const existingByWargaId = existingForKegiatan.reduce(function (map, item) {
+    map[item.warga_id] = item;
+    return map;
+  }, {});
+
+  const rowsToDelete = [];
+  existingForKegiatan.forEach(function (item) {
+    if (!desiredByWargaId[item.warga_id]) {
+      rowsToDelete.push(item.rowNumber);
+      return;
+    }
+
+    const desired = desiredByWargaId[item.warga_id];
+    if (item.catatan !== desired.catatan) {
+      sheet.getRange(item.rowNumber, catatanIndex + 1).setValue(desired.catatan);
+    }
+  });
+
+  const rowsToAppend = [];
+  Object.keys(desiredByWargaId).forEach(function (wargaId) {
+    if (existingByWargaId[wargaId]) {
+      return;
+    }
+
     nextNumber += 1;
-    return {
+    const objectData = {
       hadir_id: "H-" + ("0000" + nextNumber).slice(-4),
       old_supabase_id: "",
       kegiatan_id: kegiatanId,
-      warga_id: getRequiredValue_(item.warga_id, "warga_id pada daftar hadir wajib diisi."),
+      warga_id: wargaId,
       status_hadir: "Hadir",
-      catatan: sanitizeText_(item.catatan),
+      catatan: desiredByWargaId[wargaId].catatan,
       created_at: nowIso_()
     };
+
+    rowsToAppend.push(
+      headers.map(function (header) {
+        return objectData[String(header)] !== undefined ? objectData[String(header)] : "";
+      })
+    );
   });
 
-  replaceSheetRows_(CONFIG.SHEETS.KEHADIRAN, preservedRows.concat(nextRows));
+  rowsToDelete
+    .sort(function (a, b) {
+      return b - a;
+    })
+    .forEach(function (rowNumber) {
+      sheet.deleteRow(rowNumber);
+    });
+
+  if (rowsToAppend.length) {
+    const startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 1, rowsToAppend.length, headers.length).setValues(rowsToAppend);
+  }
+
+  invalidateSheetCache_(CONFIG.SHEETS.KEHADIRAN);
 
   logAction(user.user_id, "save_kehadiran", kegiatanId);
   return true;

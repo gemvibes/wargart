@@ -10,13 +10,12 @@ import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatCard } from "@/components/ui/StatCard";
 import { apiClient } from "@/lib/api/client";
-import { Kegiatan, Warga } from "@/lib/types";
+import { DashboardSummary } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [warga, setWarga] = useState<Warga[]>([]);
-  const [kegiatan, setKegiatan] = useState<Kegiatan[]>([]);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -24,12 +23,8 @@ export default function DashboardPage() {
     setLoading(true);
     setError("");
     try {
-      const [wargaData, kegiatanData] = await Promise.all([
-        apiClient.getWarga(),
-        apiClient.getKegiatan()
-      ]);
-      setWarga(wargaData);
-      setKegiatan(kegiatanData);
+      const summaryData = await apiClient.getDashboardSummary();
+      setSummary(summaryData);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Gagal memuat dashboard.");
     } finally {
@@ -41,18 +36,7 @@ export default function DashboardPage() {
     loadDashboard();
   }, []);
 
-  const kegiatanTerbaru = useMemo(
-    () =>
-      [...kegiatan]
-        .sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime())
-        .slice(0, 5),
-    [kegiatan]
-  );
-  const wargaAktif = useMemo(() => warga.filter((item) => item.status === "Aktif").length, [warga]);
-  const kegiatanFinal = useMemo(
-    () => kegiatan.filter((item) => item.status_kegiatan === "Final").length,
-    [kegiatan]
-  );
+  const kegiatanTerbaru = useMemo(() => summary?.kegiatan_terbaru ?? [], [summary]);
   const featuredKegiatan = kegiatanTerbaru[0] ?? null;
   const recentKegiatan = featuredKegiatan ? kegiatanTerbaru.slice(1, 4) : [];
 
@@ -62,6 +46,10 @@ export default function DashboardPage() {
 
   if (error) {
     return <ErrorMessage message={error} onRetry={loadDashboard} />;
+  }
+
+  if (!summary) {
+    return <ErrorMessage message="Ringkasan dashboard belum tersedia." onRetry={loadDashboard} />;
   }
 
   return (
@@ -82,9 +70,9 @@ export default function DashboardPage() {
       />
 
       <section className="stat-grid dashboard-stat-grid">
-        <StatCard label="Jumlah Warga Aktif" value={wargaAktif} />
-        <StatCard label="Jumlah Kegiatan" value={kegiatan.length} />
-        <StatCard label="Kegiatan Final" value={kegiatanFinal} />
+        <StatCard label="Jumlah Warga Aktif" value={summary.warga_aktif} />
+        <StatCard label="Jumlah Kegiatan" value={summary.total_kegiatan} />
+        <StatCard label="Kegiatan Final" value={summary.kegiatan_final} />
       </section>
 
       <section className="dashboard-layout">

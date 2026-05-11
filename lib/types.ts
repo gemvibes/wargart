@@ -168,3 +168,10 @@ export interface RekapFilters {
   sort_by: string;
   sort_order: "asc" | "desc";
 }
+
+export interface DashboardSummary {
+  warga_aktif: number;
+  total_kegiatan: number;
+  kegiatan_final: number;
+  kegiatan_terbaru: Kegiatan[];
+}
