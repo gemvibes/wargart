@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
+import { APP_NAME, APP_TAGLINE, DATABASE_SPREADSHEET_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -73,10 +73,22 @@ function NavIcon({ icon }: { icon: "dashboard" | "warga" | "kegiatan" | "rekap" 
   }
 }
 
+function DatabaseIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+      <path
+        d="M12 4c-4.418 0-8 1.343-8 3v10c0 1.657 3.582 3 8 3s8-1.343 8-3V7c0-1.657-3.582-3-8-3Zm0 2c3.866 0 6 .98 6 1s-2.134 1-6 1-6-.98-6-1 2.134-1 6-1Zm0 12c-3.866 0-6-.98-6-1v-1.711C7.282 15.74 9.463 16 12 16s4.718-.26 6-.711V17c0 .02-2.134 1-6 1Zm0-4c-3.866 0-6-.98-6-1v-1.711C7.282 11.74 9.463 12 12 12s4.718-.26 6-.711V13c0 .02-2.134 1-6 1Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const roleLabel = user?.role === "superadmin" ? "Superadmin" : "Viewer";
+  const isSuperAdmin = user?.role === "superadmin";
 
   return (
     <div className="app-shell">
@@ -104,6 +116,23 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
+
+        {isSuperAdmin ? (
+          <a
+            className="sidebar-utility-link"
+            href={DATABASE_SPREADSHEET_URL}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <span className="nav-icon" aria-hidden="true">
+              <DatabaseIcon />
+            </span>
+            <span className="nav-label">
+              <span className="nav-label-full">Database</span>
+              <span className="nav-label-short">DB</span>
+            </span>
+          </a>
+        ) : null}
 
         <div className="sidebar-footer">
           <div className="sidebar-footer-copy">

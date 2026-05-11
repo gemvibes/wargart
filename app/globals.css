@@ -204,6 +204,30 @@ img {
   transform: scaleY(1);
 }
 
+.sidebar-utility-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.06));
+  color: #ffffff;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sidebar-utility-link:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(167, 243, 208, 0.22);
+  transform: translateY(-1px);
+}
+
 .sidebar-footer {
   margin-top: auto;
   display: flex;
@@ -2245,6 +2269,17 @@ textarea:focus-visible {
 .nav-link.active {
   background: var(--primary-soft);
   color: var(--primary-dark);
+}
+
+.sidebar-utility-link {
+  border-color: #e5eeeb;
+  background: #f9fbfb;
+  color: var(--text-strong);
+}
+
+.sidebar-utility-link:hover {
+  background: #f3f9f7;
+  border-color: rgba(15, 118, 110, 0.16);
 }
 
 .sidebar-footer {

@@ -1,5 +1,7 @@
 export const APP_NAME = "Titeni";
 export const APP_TAGLINE = "Menata data warga, mencatat rembug warga.";
+export const DATABASE_SPREADSHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1KJ0nmRXuWw6-bhhIkGiaDSUoHFTR7_zNml3kQqOKC1k/edit";
 
 export const ROLE_OPTIONS = ["superadmin", "viewer"] as const;
 export const DAWIS_OPTIONS = ["1", "2", "3", "4", "5", "6"] as const;
