@@ -20,6 +20,10 @@ function toBase64(file: File) {
   });
 }
 
+function getPublicPhotoProxyUrl(fileId: string) {
+  return `/api/public-photos/${encodeURIComponent(fileId)}`;
+}
+
 export function PhotoUploader({
   kegiatanId,
   photos,
@@ -111,11 +115,16 @@ export function PhotoUploader({
           {photos.map((photo) => (
             <div className="photo-card" key={photo.foto_id}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img alt={photo.caption || photo.file_name} src={photo.file_url} />
+              <img alt={photo.caption || photo.file_name} src={getPublicPhotoProxyUrl(photo.file_id)} />
               <div className="photo-body">
                 <strong>{photo.file_name}</strong>
                 <p className="helper-text">{photo.caption || "Tanpa caption"}</p>
-                <a className="button ghost" href={photo.file_url} rel="noreferrer" target="_blank">
+                <a
+                  className="button ghost"
+                  href={getPublicPhotoProxyUrl(photo.file_id)}
+                  rel="noreferrer"
+                  target="_blank"
+                >
                   Buka Foto
                 </a>
                 {canEdit ? (
