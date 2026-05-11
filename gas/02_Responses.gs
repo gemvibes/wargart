@@ -27,11 +27,11 @@ function redirectToFrontend_(url) {
       JSON.stringify(safeUrl) +
       ');</script>' +
       "</head><body>" +
-      '<p>Mengarahkan ke aplikasi WargaRT. Jika tidak berpindah otomatis, buka <a href="' +
+      '<p>Mengarahkan ke aplikasi Titeni. Jika tidak berpindah otomatis, buka <a href="' +
       safeUrl +
       '">halaman aplikasi</a>.</p>' +
       "</body></html>"
   );
-  html.setTitle("WargaRT");
+  html.setTitle("Titeni");
   return html;
 }

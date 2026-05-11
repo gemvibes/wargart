@@ -65,7 +65,7 @@ export default function RekapKehadiranPage() {
 
   function handleExportCsv() {
     const csv = buildRekapCsv(rows);
-    downloadTextFile("rekap-kehadiran-wargart.csv", csv, "text/csv;charset=utf-8;");
+    downloadTextFile("rekap-kehadiran-titeni.csv", csv, "text/csv;charset=utf-8;");
   }
 
   return (

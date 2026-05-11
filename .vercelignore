@@ -1,0 +1,8 @@
+.git
+.next
+.tmp.drivedownload
+.tmp.driveupload
+.dev.stderr.log
+.dev.stdout.log
+Database_fix.copy.xlsx
+tsconfig.tsbuildinfo

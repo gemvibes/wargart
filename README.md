@@ -1,6 +1,6 @@
-# WargaRT
+# Titeni
 
-WargaRT adalah aplikasi web administrasi RT untuk membantu sekretaris RT mengelola data warga, kegiatan, daftar hadir, dokumentasi foto, export laporan kegiatan, dan rekap kehadiran warga.
+Titeni adalah aplikasi web administrasi RT untuk membantu sekretaris RT mengelola data warga, kegiatan, daftar hadir, dokumentasi foto, export laporan kegiatan, dan rekap kehadiran warga.
 
 Stack MVP:
 
@@ -234,7 +234,7 @@ clasp push
 7. Setelah file berhasil masuk ke Apps Script, jalankan fungsi:
 
 ```javascript
-setupWargaRTProject()
+setupTiteniProject()
 ```
 
 8. Untuk validasi struktur spreadsheet sesudah setup:
@@ -246,7 +246,7 @@ validateSpreadsheetStructure()
 Catatan:
 
 - `scriptId` berbeda dengan `SPREADSHEET_ID`
-- `setupWargaRTProject()` akan membantu membuat sheet yang belum ada dan menambahkan header yang kurang, tetapi tidak dirancang untuk menghapus data warga lama
+- `setupTiteniProject()` akan membantu membuat sheet yang belum ada dan menambahkan header yang kurang, tetapi tidak dirancang untuk menghapus data warga lama
 
 ### Setup Otomatis dengan Fungsi Apps Script
 
@@ -263,7 +263,7 @@ const SETUP_INPUT = {
   spreadsheetId: "ID_SPREADSHEET",
   documentationFolderId: "ID_FOLDER_DOKUMENTASI",
   exportFolderId: "ID_FOLDER_EXPORT",
-  frontendAppUrl: "https://domain-frontend-anda.vercel.app",
+  frontendAppUrl: "https://titeni.vercel.app",
   docTemplateId: "",
   sessionSecret: "isi-dengan-secret-aman",
   autoCreateTemplate: true,
@@ -271,7 +271,7 @@ const SETUP_INPUT = {
 };
 ```
 
-4. Jalankan fungsi `setupWargaRTProject()`.
+4. Jalankan fungsi `setupTiteniProject()`.
 
 Fungsi ini akan:
 

@@ -81,7 +81,7 @@ function handleRootRequest_() {
     return jsonResponse(
       {
         message:
-          "Backend WargaRT aktif. Tambahkan parameter action untuk API atau atur FRONTEND_APP_URL agar URL GAS mengarahkan ke frontend publik."
+          "Backend Titeni aktif. Tambahkan parameter action untuk API atau atur FRONTEND_APP_URL agar URL GAS mengarahkan ke frontend publik."
       },
       true
     );

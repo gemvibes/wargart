@@ -189,7 +189,7 @@ export default function WargaPage() {
                     <th>Dawis</th>
                     <th>Status Tinggal</th>
                     <th>Status</th>
-                    <th>Jumlah KK</th>
+                    <th>JUMLAH ANGGOTA</th>
                     <th className="warga-col-action">Aksi</th>
                   </tr>
                 </thead>
@@ -261,7 +261,7 @@ export default function WargaPage() {
                       <span>{item.status_tinggal || "-"}</span>
                     </div>
                     <div className="warga-mobile-item">
-                      <span className="warga-mobile-label">Jumlah KK</span>
+                      <span className="warga-mobile-label">JUMLAH ANGGOTA</span>
                       <span>{item.jumlah_anggota_kk}</span>
                     </div>
                   </div>

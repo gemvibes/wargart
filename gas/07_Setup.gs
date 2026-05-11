@@ -61,7 +61,7 @@ const DEFAULT_SETTINGS = {
   nama_sekretaris: ""
 };
 
-function setupWargaRTProject() {
+function setupTiteniProject() {
   validateSetupInput_();
   saveSetupProperties_();
   ensureAllSheets_();
@@ -234,7 +234,7 @@ function validateSpreadsheetStructure_() {
 
 function createDefaultDocsTemplate_() {
   const exportFolder = DriveApp.getFolderById(SETUP_INPUT.exportFolderId);
-  const doc = DocumentApp.create("Template Laporan Kegiatan WargaRT");
+  const doc = DocumentApp.create("Template Laporan Kegiatan Titeni");
   const file = DriveApp.getFileById(doc.getId());
   file.moveTo(exportFolder);
 

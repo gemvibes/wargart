@@ -24,7 +24,7 @@ const SETUP_INPUT = {
   spreadsheetId: "1KJ0nmRXuWw6-bhhIkGiaDSUoHFTR7_zNml3kQqOKC1k",
   documentationFolderId: "1LrKF3l1FzafaouYZmeAi9PFKlmx4sEMZ",
   exportFolderId: "10lFIBh8CgPQGuMqIq2dlUb8HbwvRAsof",
-  frontendAppUrl: "",
+  frontendAppUrl: "https://titeni.vercel.app",
   docTemplateId: "",
   sessionSecret: "ganti-dengan-session-secret-aman",
   autoCreateTemplate: true,

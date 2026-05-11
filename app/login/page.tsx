@@ -66,7 +66,7 @@ function LoginContent() {
             </div>
 
             <div className="login-value-stack">
-              <div className="login-value-list" aria-label="Keunggulan Titena">
+              <div className="login-value-list" aria-label="Keunggulan Titeni">
                 {loginHighlights.map((item) => (
                   <div className="login-value-item" key={item}>
                     <span className="login-value-icon" aria-hidden="true">
@@ -167,7 +167,7 @@ function LoginContent() {
                 <p className="login-support">Akun bermasalah? Hubungi admin RT.</p>
               </form>
 
-              <p className="login-credit">© 2026 Titena by FSL.</p>
+              <p className="login-credit">© 2026 Titeni by FSL.</p>
             </div>
           </section>
         </div>
