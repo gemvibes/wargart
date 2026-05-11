@@ -2237,71 +2237,8 @@ textarea:focus-visible {
   margin: 0;
   padding: 20px 28px 32px 0;
   display: grid;
-  gap: 22px;
+  gap: 0;
   align-content: start;
-}
-
-.topbar {
-  position: sticky;
-  top: 20px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 18px 22px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.84);
-  backdrop-filter: blur(14px);
-  box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.04),
-    0 18px 40px rgba(15, 23, 42, 0.04);
-}
-
-.topbar-context,
-.topbar-meta,
-.topbar-user {
-  display: grid;
-  gap: 4px;
-}
-
-.topbar-context strong,
-.topbar-user-name {
-  color: var(--text-strong);
-}
-
-.topbar-context strong {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.topbar-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-
-.topbar-context p,
-.topbar-user-role,
-.topbar-date {
-  margin: 0;
-  font-size: 0.83rem;
-  color: var(--text-soft);
-}
-
-.topbar-meta {
-  justify-items: end;
-}
-
-.topbar-user {
-  justify-items: end;
-  padding-left: 18px;
-  border-left: 1px solid #e8eef4;
 }
 
 .content-body,
@@ -2901,10 +2838,6 @@ a.quick-list-item::after {
     padding: 0 0 24px;
   }
 
-  .topbar {
-    top: 16px;
-  }
-
 }
 
 @media (max-width: 720px) {
@@ -2994,12 +2927,9 @@ a.quick-list-item::after {
   }
 
   .main-content {
-    gap: 16px;
     padding: 0 0 calc(116px + env(safe-area-inset-bottom));
   }
 
-  .topbar,
-  .topbar-meta,
   .page-header,
   .modal-header,
   .inline-between,
@@ -3007,49 +2937,6 @@ a.quick-list-item::after {
   .attendance-row,
   .label-row {
     display: grid;
-  }
-
-  .topbar {
-    position: relative;
-    top: auto;
-    gap: 0;
-    padding: 18px 18px 20px;
-    border-radius: 22px;
-    border-color: #dce5e3;
-    background: #ffffff;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
-  }
-
-  .topbar-context {
-    gap: 6px;
-  }
-
-  .topbar-eyebrow {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-  }
-
-  .topbar-context strong {
-    font-size: clamp(1.28rem, 1.12rem + 0.9vw, 1.48rem);
-    line-height: 1.1;
-  }
-
-  .topbar-context p {
-    font-size: 0.84rem;
-    line-height: 1.5;
-  }
-
-  .topbar-meta {
-    margin-top: 12px;
-    justify-items: start;
-  }
-
-  .topbar-date {
-    font-size: 0.82rem;
-  }
-
-  .topbar-user {
-    display: none;
   }
 
   .page-actions {

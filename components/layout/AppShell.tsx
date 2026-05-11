@@ -76,13 +76,6 @@ function NavIcon({ icon }: { icon: "dashboard" | "warga" | "kegiatan" | "rekap" 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const activeMenu = menuItems.find((item) => pathname.startsWith(item.href)) ?? menuItems[0];
-  const todayLabel = new Intl.DateTimeFormat("id-ID", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-    year: "numeric"
-  }).format(new Date());
   const roleLabel = user?.role === "superadmin" ? "Superadmin" : "Viewer";
 
   return (
@@ -124,22 +117,6 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <main className="main-content">
-        <header className="topbar">
-          <div className="topbar-context">
-            <span className="topbar-eyebrow">WORKSPACE</span>
-            <strong>{activeMenu.label}</strong>
-            <p>{activeMenu.context}</p>
-          </div>
-
-          <div className="topbar-meta">
-            <span className="topbar-date">{todayLabel}</span>
-            <div className="topbar-user">
-              <span className="topbar-user-name">{user?.nama}</span>
-              <span className="topbar-user-role">{roleLabel}</span>
-            </div>
-          </div>
-        </header>
-
         <div className="content-body">{children}</div>
       </main>
     </div>
