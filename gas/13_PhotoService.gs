@@ -1,3 +1,25 @@
+function buildPublicDriveImageUrl_(fileId) {
+  return "https://drive.google.com/uc?export=view&id=" + fileId;
+}
+
+function ensurePublicPhotoRecord_(photo) {
+  const normalized = Object.assign({}, photo);
+  const fileId = sanitizeText_(photo.file_id);
+  if (!fileId) {
+    return normalized;
+  }
+
+  try {
+    const file = DriveApp.getFileById(fileId);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    normalized.file_url = buildPublicDriveImageUrl_(fileId);
+  } catch (error) {
+    normalized.file_url = sanitizeText_(photo.file_url) || buildPublicDriveImageUrl_(fileId);
+  }
+
+  return normalized;
+}
+
 function uploadFotoKegiatan_(body, payload) {
   const user = requireAuth_(body.token);
   requireSuperAdmin(user);
@@ -21,7 +43,7 @@ function uploadFotoKegiatan_(body, payload) {
     kegiatan_id: kegiatanId,
     file_name: fileName,
     file_id: file.getId(),
-    file_url: "https://drive.google.com/uc?export=view&id=" + file.getId(),
+    file_url: buildPublicDriveImageUrl_(file.getId()),
     caption: sanitizeText_(payload.caption),
     uploaded_at: nowIso_()
   };

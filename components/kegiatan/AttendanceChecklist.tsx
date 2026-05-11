@@ -35,6 +35,13 @@ export function AttendanceChecklist({
       }),
     [dawisFilter, items, search]
   );
+  const visibleItems = useMemo(
+    () =>
+      canEdit
+        ? filteredItems
+        : filteredItems.filter((item) => String(item.status_hadir) === "Hadir"),
+    [canEdit, filteredItems]
+  );
   const listHeight = visibleCount === 10 ? 640 : 1120;
 
   function updateItem(wargaId: string, patch: Partial<AttendanceItem>) {
@@ -48,7 +55,11 @@ export function AttendanceChecklist({
       <div className="modal-header">
         <div>
           <h3>Daftar Hadir</h3>
-          <p className="muted">Tandai warga yang hadir dan tambahkan catatan bila diperlukan.</p>
+          <p className="muted">
+            {canEdit
+              ? "Tandai warga yang hadir dan tambahkan catatan bila diperlukan."
+              : "Daftar ini hanya menampilkan warga yang tercatat hadir pada kegiatan ini."}
+          </p>
         </div>
         {canEdit ? (
           <button className="button primary" disabled={saving} onClick={() => onSave(items)} type="button">
@@ -89,10 +100,14 @@ export function AttendanceChecklist({
         <p className="helper-text">Belum ada warga aktif yang bisa ditampilkan.</p>
       ) : filteredItems.length === 0 ? (
         <p className="helper-text">Tidak ada warga yang cocok dengan pencarian atau filter Dawis.</p>
+      ) : !canEdit && visibleItems.length === 0 ? (
+        <p className="helper-text">Belum ada warga yang ditandai hadir untuk kegiatan ini.</p>
       ) : (
         <>
           <div className="list-toolbar">
-            <p className="helper-text">Total {filteredItems.length} warga ditampilkan.</p>
+            <p className="helper-text">
+              Total {visibleItems.length} {canEdit ? "warga ditampilkan." : "warga hadir ditampilkan."}
+            </p>
             <div className="list-size-control">
               <label htmlFor="attendance-visible-count">Tampilkan</label>
               <select
@@ -108,40 +123,50 @@ export function AttendanceChecklist({
           </div>
 
           <div className="attendance-list scroll-surface attendance-list-surface" style={{ maxHeight: listHeight }}>
-            {filteredItems.map((item) => (
-              <div className="attendance-row" key={item.warga_id}>
-                <div>
-                  <strong>{item.nama}</strong>
-                  <div className="helper-text">Rumah {item.nomor_rumah || "-"} | Dawis {item.dawis || "-"}</div>
-                </div>
+            {canEdit
+              ? visibleItems.map((item) => (
+                  <div className="attendance-row" key={item.warga_id}>
+                    <div>
+                      <strong>{item.nama}</strong>
+                      <div className="helper-text">Rumah {item.nomor_rumah || "-"} | Dawis {item.dawis || "-"}</div>
+                    </div>
 
-                <label className="list-row" style={{ justifyContent: "flex-start" }}>
-                  <input
-                    checked={item.status_hadir === "Hadir"}
-                    disabled={!canEdit}
-                    onChange={(event) =>
-                      updateItem(item.warga_id, {
-                        status_hadir: event.target.checked ? "Hadir" : "Tidak Hadir"
-                      })
-                    }
-                    type="checkbox"
-                  />
-                  Hadir
-                </label>
+                    <label className="list-row" style={{ justifyContent: "flex-start" }}>
+                      <input
+                        checked={item.status_hadir === "Hadir"}
+                        disabled={!canEdit}
+                        onChange={(event) =>
+                          updateItem(item.warga_id, {
+                            status_hadir: event.target.checked ? "Hadir" : "Tidak Hadir"
+                          })
+                        }
+                        type="checkbox"
+                      />
+                      Hadir
+                    </label>
 
-                <span className={`badge ${item.status_hadir === "Hadir" ? "green" : "red"}`}>
-                  {item.status_hadir}
-                </span>
+                    <span className={`badge ${item.status_hadir === "Hadir" ? "green" : "red"}`}>
+                      {item.status_hadir}
+                    </span>
 
-                <input
-                  className="input"
-                  disabled={!canEdit}
-                  onChange={(event) => updateItem(item.warga_id, { catatan: event.target.value })}
-                  placeholder="Catatan"
-                  value={item.catatan}
-                />
-              </div>
-            ))}
+                    <input
+                      className="input"
+                      disabled={!canEdit}
+                      onChange={(event) => updateItem(item.warga_id, { catatan: event.target.value })}
+                      placeholder="Catatan"
+                      value={item.catatan}
+                    />
+                  </div>
+                ))
+              : visibleItems.map((item, index) => (
+                  <div className="attendance-viewer-row" key={item.warga_id}>
+                    <div className="attendance-viewer-index">{String(index + 1).padStart(2, "0")}</div>
+                    <div className="attendance-viewer-body">
+                      <strong>{item.nama}</strong>
+                      <div className="helper-text">Rumah {item.nomor_rumah || "-"} | Dawis {item.dawis || "-"}</div>
+                    </div>
+                  </div>
+                ))}
           </div>
         </>
       )}

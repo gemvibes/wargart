@@ -111,9 +111,13 @@ function getKegiatanDetail_(e) {
     ["KEGIATAN", "FOTO"],
     function () {
       const kegiatan = findById_(CONFIG.SHEETS.KEGIATAN, "kegiatan_id", kegiatanId);
-      const photos = readSheetAsObjects(CONFIG.SHEETS.FOTO).filter(function (item) {
-        return String(item.kegiatan_id) === kegiatanId;
-      });
+      const photos = readSheetAsObjects(CONFIG.SHEETS.FOTO)
+        .filter(function (item) {
+          return String(item.kegiatan_id) === kegiatanId;
+        })
+        .map(function (photo) {
+          return ensurePublicPhotoRecord_(photo);
+        });
 
       return {
         kegiatan: kegiatan,
