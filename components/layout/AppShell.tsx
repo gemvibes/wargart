@@ -13,28 +13,28 @@ const menuItems = [
     label: "Dashboard",
     shortLabel: "Beranda",
     icon: "dashboard",
-    context: "Ringkasan administrasi RT"
+    context: "Ringkasan administrasi RT."
   },
   {
     href: "/warga",
     label: "Data Warga",
     shortLabel: "Warga",
     icon: "warga",
-    context: "Kelola data warga dan status keluarga"
+    context: "Kelola data warga dan status keluarga."
   },
   {
     href: "/kegiatan",
     label: "Daftar Kegiatan",
     shortLabel: "Kegiatan",
     icon: "kegiatan",
-    context: "Pantau kegiatan, hadir, dan dokumentasi"
+    context: "Pantau kegiatan, hadir, dan dokumentasi."
   },
   {
     href: "/rekap-kehadiran",
     label: "Rekap Kehadiran",
     shortLabel: "Rekap",
     icon: "rekap",
-    context: "Lihat ringkasan kehadiran warga"
+    context: "Lihat ringkasan kehadiran warga."
   }
 ] as const;
 
@@ -89,9 +89,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-eyebrow">RT 03 / RW 03</span>
-          <h1>{APP_NAME}</h1>
+          <h1>{APP_NAME.toUpperCase()}</h1>
           <p>{APP_TAGLINE}</p>
+          <span className="brand-eyebrow brand-chip">RT 03 • RW 03</span>
         </div>
 
         <nav className="nav-list">
@@ -126,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="main-content">
         <header className="topbar">
           <div className="topbar-context">
-            <span className="topbar-eyebrow">Workspace</span>
+            <span className="topbar-eyebrow">WORKSPACE</span>
             <strong>{activeMenu.label}</strong>
             <p>{activeMenu.context}</p>
           </div>
