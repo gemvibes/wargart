@@ -1,9 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { CSSProperties, useEffect, useState } from "react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
-import { KegiatanFormModal } from "@/components/kegiatan/KegiatanFormModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingState } from "@/components/ui/LoadingState";
@@ -13,6 +13,10 @@ import { apiClient } from "@/lib/api/client";
 import { Kegiatan, KegiatanPayload, KegiatanPhotoDraft } from "@/lib/types";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { formatDate, formatTimeRange } from "@/lib/utils";
+
+const KegiatanFormModal = dynamic(
+  () => import("@/components/kegiatan/KegiatanFormModal").then((module) => module.KegiatanFormModal)
+);
 
 export default function KegiatanPage() {
   const [kegiatan, setKegiatan] = useState<Kegiatan[]>([]);

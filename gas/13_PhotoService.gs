@@ -27,6 +27,7 @@ function uploadFotoKegiatan_(body, payload) {
   };
 
   appendRow(CONFIG.SHEETS.FOTO, record);
+  bumpDataVersion_(["FOTO"]);
   logAction(user.user_id, "upload_foto_kegiatan", kegiatanId);
   return record;
 }
@@ -38,7 +39,7 @@ function deleteFotoKegiatan_(body, payload) {
   const photo = findById_(CONFIG.SHEETS.FOTO, "foto_id", fotoId);
   safelyDeleteDriveFile_(photo.file_id);
   deleteRowById(CONFIG.SHEETS.FOTO, "foto_id", fotoId);
+  bumpDataVersion_(["FOTO"]);
   logAction(user.user_id, "delete_foto_kegiatan", fotoId);
   return true;
 }
-

@@ -45,3 +45,52 @@ function safelyDeleteDriveFile_(fileId) {
   } catch (error) {}
 }
 
+function digestKey_(value) {
+  const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, String(value));
+  return digest
+    .map(function (byte) {
+      const normalized = byte < 0 ? byte + 256 : byte;
+      return ("0" + normalized.toString(16)).slice(-2);
+    })
+    .join("");
+}
+
+function getDataVersion_(scope) {
+  return (
+    PropertiesService.getScriptProperties().getProperty(CONFIG.PROPERTIES.DATA_VERSION_PREFIX + scope) ||
+    "1"
+  );
+}
+
+function buildDataCacheKey_(key, scopes) {
+  const version = (scopes || []).map(getDataVersion_).join("|");
+  return CONFIG.DATA_CACHE_PREFIX + digestKey_(key + "::" + version);
+}
+
+function readThroughDataCache_(key, scopes, producer, ttlSeconds) {
+  const cacheKey = buildDataCacheKey_(key, scopes);
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    return JSON.parse(cached);
+  }
+
+  const result = producer();
+  const serialized = JSON.stringify(result);
+
+  if (serialized.length <= 90000) {
+    try {
+      cache.put(cacheKey, serialized, ttlSeconds || CONFIG.DATA_CACHE_TTL_SECONDS);
+    } catch (error) {}
+  }
+
+  return result;
+}
+
+function bumpDataVersion_(scopes) {
+  const properties = PropertiesService.getScriptProperties();
+  const value = String(new Date().getTime());
+  (scopes || []).forEach(function (scope) {
+    properties.setProperty(CONFIG.PROPERTIES.DATA_VERSION_PREFIX + scope, value);
+  });
+}

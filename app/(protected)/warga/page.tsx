@@ -1,16 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { WargaFormModal } from "@/components/warga/WargaFormModal";
 import { DAWIS_OPTIONS, STATUS_TINGGAL_OPTIONS } from "@/lib/constants";
 import { apiClient } from "@/lib/api/client";
 import { Warga, WargaPayload } from "@/lib/types";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
+
+const WargaFormModal = dynamic(
+  () => import("@/components/warga/WargaFormModal").then((module) => module.WargaFormModal)
+);
 export default function WargaPage() {
   const [warga, setWarga] = useState<Warga[]>([]);
   const [loading, setLoading] = useState(true);

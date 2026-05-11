@@ -1,12 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { ExportButtons } from "@/components/kegiatan/ExportButtons";
-import { AttendanceChecklist } from "@/components/kegiatan/AttendanceChecklist";
-import { KegiatanFormModal } from "@/components/kegiatan/KegiatanFormModal";
-import { PhotoUploader } from "@/components/kegiatan/PhotoUploader";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -15,12 +12,35 @@ import { downloadKegiatanPdf } from "@/lib/pdf/kegiatanPdf";
 import { AttendanceItem, Kegiatan, KegiatanPayload, KegiatanDetailResponse } from "@/lib/types";
 import { downloadBase64File, formatDate, formatTimeRange } from "@/lib/utils";
 
+const ExportButtons = dynamic(
+  () => import("@/components/kegiatan/ExportButtons").then((module) => module.ExportButtons)
+);
+const AttendanceChecklist = dynamic(
+  () =>
+    import("@/components/kegiatan/AttendanceChecklist").then(
+      (module) => module.AttendanceChecklist
+    ),
+  {
+    loading: () => <LoadingState message="Memuat daftar hadir..." />
+  }
+);
+const KegiatanFormModal = dynamic(
+  () => import("@/components/kegiatan/KegiatanFormModal").then((module) => module.KegiatanFormModal)
+);
+const PhotoUploader = dynamic(
+  () => import("@/components/kegiatan/PhotoUploader").then((module) => module.PhotoUploader),
+  {
+    loading: () => <LoadingState message="Memuat dokumentasi foto..." />
+  }
+);
+
 export default function KegiatanDetailPage() {
   const params = useParams<{ id: string }>();
   const { user } = useAuth();
   const [detail, setDetail] = useState<KegiatanDetailResponse | null>(null);
   const [attendance, setAttendance] = useState<AttendanceItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [attendanceLoading, setAttendanceLoading] = useState(true);
   const [savingAttendance, setSavingAttendance] = useState(false);
   const [savingInfo, setSavingInfo] = useState(false);
   const [error, setError] = useState("");
@@ -29,16 +49,27 @@ export default function KegiatanDetailPage() {
   const kegiatanId = String(params.id);
   const canEdit = user?.role === "superadmin";
 
+  async function loadAttendance() {
+    setAttendanceLoading(true);
+    try {
+      const attendanceData = await apiClient.getKegiatanKehadiran(kegiatanId);
+      setAttendance(attendanceData);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Gagal memuat daftar hadir.");
+    } finally {
+      setAttendanceLoading(false);
+    }
+  }
+
   async function loadDetail() {
     setLoading(true);
     setError("");
     try {
-      const [detailData, attendanceData] = await Promise.all([
-        apiClient.getKegiatanDetail(kegiatanId),
-        apiClient.getKegiatanKehadiran(kegiatanId)
-      ]);
+      const detailData = await apiClient.getKegiatanDetail(kegiatanId);
       setDetail(detailData);
-      setAttendance(attendanceData);
+      setLoading(false);
+      await loadAttendance();
+      return;
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Gagal memuat detail kegiatan.");
     } finally {
@@ -186,9 +217,9 @@ export default function KegiatanDetailPage() {
 
       <AttendanceChecklist
         canEdit={canEdit}
-        initialItems={attendance}
+        initialItems={attendanceLoading ? [] : attendance}
         onSave={handleSaveAttendance}
-        saving={savingAttendance}
+        saving={savingAttendance || attendanceLoading}
       />
 
       <PhotoUploader

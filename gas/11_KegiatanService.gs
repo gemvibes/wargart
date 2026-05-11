@@ -19,19 +19,31 @@ function getKegiatan_(e) {
   const bulan = sanitizeText_(e.parameter.bulan);
   const tahun = sanitizeText_(e.parameter.tahun);
 
-  return readSheetAsObjects(CONFIG.SHEETS.KEGIATAN)
-    .filter(function (item) {
-      if (search && String(item.nama_kegiatan || "").toLowerCase().indexOf(search) === -1) return false;
-      if (jenis && String(item.jenis_kegiatan) !== jenis) return false;
+  return readThroughDataCache_(
+    JSON.stringify({
+      action: "getKegiatan",
+      search: search,
+      jenis: jenis,
+      bulan: bulan,
+      tahun: tahun
+    }),
+    ["KEGIATAN"],
+    function () {
+      return readSheetAsObjects(CONFIG.SHEETS.KEGIATAN)
+        .filter(function (item) {
+          if (search && String(item.nama_kegiatan || "").toLowerCase().indexOf(search) === -1) return false;
+          if (jenis && String(item.jenis_kegiatan) !== jenis) return false;
 
-      const date = normalizeDateString_(item.tanggal);
-      if (bulan && date && String(new Date(date).getMonth() + 1) !== bulan) return false;
-      if (tahun && date && String(new Date(date).getFullYear()) !== tahun) return false;
-      return true;
-    })
-    .sort(function (a, b) {
-      return new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime();
-    });
+          const date = normalizeDateString_(item.tanggal);
+          if (bulan && date && String(new Date(date).getMonth() + 1) !== bulan) return false;
+          if (tahun && date && String(new Date(date).getFullYear()) !== tahun) return false;
+          return true;
+        })
+        .sort(function (a, b) {
+          return new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime();
+        });
+    }
+  );
 }
 
 function createKegiatan_(body, payload) {
@@ -48,6 +60,7 @@ function createKegiatan_(body, payload) {
   });
 
   appendRow(CONFIG.SHEETS.KEGIATAN, record);
+  bumpDataVersion_(["KEGIATAN"]);
   logAction(user.user_id, "create_kegiatan", record.kegiatan_id);
   return record;
 }
@@ -63,6 +76,7 @@ function updateKegiatan_(body, payload) {
   });
 
   updateRowById(CONFIG.SHEETS.KEGIATAN, "kegiatan_id", kegiatanId, record);
+  bumpDataVersion_(["KEGIATAN"]);
   logAction(user.user_id, "update_kegiatan", kegiatanId);
   return record;
 }
@@ -81,6 +95,7 @@ function deleteKegiatan_(body, payload) {
     deleteRowById(CONFIG.SHEETS.FOTO, "foto_id", photo.foto_id);
   });
   deleteRowById(CONFIG.SHEETS.KEGIATAN, "kegiatan_id", kegiatanId);
+  bumpDataVersion_(["KEGIATAN", "KEHADIRAN", "FOTO"]);
   logAction(user.user_id, "delete_kegiatan", kegiatanId);
   return true;
 }
@@ -88,14 +103,22 @@ function deleteKegiatan_(body, payload) {
 function getKegiatanDetail_(e) {
   requireAuth_(e.parameter.token);
   const kegiatanId = getRequiredValue_(e.parameter.kegiatan_id, "kegiatan_id wajib diisi.");
-  const kegiatan = findById_(CONFIG.SHEETS.KEGIATAN, "kegiatan_id", kegiatanId);
-  const photos = readSheetAsObjects(CONFIG.SHEETS.FOTO).filter(function (item) {
-    return String(item.kegiatan_id) === kegiatanId;
-  });
+  return readThroughDataCache_(
+    JSON.stringify({
+      action: "getKegiatanDetail",
+      kegiatan_id: kegiatanId
+    }),
+    ["KEGIATAN", "FOTO"],
+    function () {
+      const kegiatan = findById_(CONFIG.SHEETS.KEGIATAN, "kegiatan_id", kegiatanId);
+      const photos = readSheetAsObjects(CONFIG.SHEETS.FOTO).filter(function (item) {
+        return String(item.kegiatan_id) === kegiatanId;
+      });
 
-  return {
-    kegiatan: kegiatan,
-    photos: photos
-  };
+      return {
+        kegiatan: kegiatan,
+        photos: photos
+      };
+    }
+  );
 }
-

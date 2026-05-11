@@ -1,8 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import { AttendanceSummaryFilters } from "@/components/rekap/AttendanceSummaryFilters";
-import { AttendanceSummaryTable } from "@/components/rekap/AttendanceSummaryTable";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingState } from "@/components/ui/LoadingState";
@@ -12,6 +11,22 @@ import { apiClient } from "@/lib/api/client";
 import { RekapFilters, RekapKehadiranItem } from "@/lib/types";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { downloadTextFile, formatPercent } from "@/lib/utils";
+
+const AttendanceSummaryFilters = dynamic(
+  () =>
+    import("@/components/rekap/AttendanceSummaryFilters").then(
+      (module) => module.AttendanceSummaryFilters
+    )
+);
+const AttendanceSummaryTable = dynamic(
+  () =>
+    import("@/components/rekap/AttendanceSummaryTable").then(
+      (module) => module.AttendanceSummaryTable
+    ),
+  {
+    loading: () => <LoadingState message="Menyiapkan tabel rekap..." />
+  }
+);
 
 const initialFilters: RekapFilters = {
   search: "",

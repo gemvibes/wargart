@@ -21,16 +21,27 @@ function getWarga_(e) {
   const dawis = sanitizeText_(e.parameter.dawis);
   const statusTinggal = sanitizeText_(e.parameter.status_tinggal);
 
-  return readSheetAsObjects(CONFIG.SHEETS.WARGA)
-    .filter(function (item) {
-      if (search && String(item.nama || "").toLowerCase().indexOf(search) === -1) return false;
-      if (dawis && String(item.dawis) !== dawis) return false;
-      if (statusTinggal && String(item.status_tinggal) !== statusTinggal) return false;
-      return true;
-    })
-    .sort(function (a, b) {
-      return String(a.nama).localeCompare(String(b.nama), "id");
-    });
+  return readThroughDataCache_(
+    JSON.stringify({
+      action: "getWarga",
+      search: search,
+      dawis: dawis,
+      status_tinggal: statusTinggal
+    }),
+    ["WARGA"],
+    function () {
+      return readSheetAsObjects(CONFIG.SHEETS.WARGA)
+        .filter(function (item) {
+          if (search && String(item.nama || "").toLowerCase().indexOf(search) === -1) return false;
+          if (dawis && String(item.dawis) !== dawis) return false;
+          if (statusTinggal && String(item.status_tinggal) !== statusTinggal) return false;
+          return true;
+        })
+        .sort(function (a, b) {
+          return String(a.nama).localeCompare(String(b.nama), "id");
+        });
+    }
+  );
 }
 
 function createWarga_(body, payload) {
@@ -46,6 +57,7 @@ function createWarga_(body, payload) {
   });
 
   appendRow(CONFIG.SHEETS.WARGA, record);
+  bumpDataVersion_(["WARGA"]);
   logAction(user.user_id, "create_warga", record.warga_id);
   return record;
 }
@@ -62,6 +74,7 @@ function updateWarga_(body, payload) {
   });
 
   updateRowById(CONFIG.SHEETS.WARGA, "warga_id", wargaId, record);
+  bumpDataVersion_(["WARGA"]);
   logAction(user.user_id, "update_warga", wargaId);
   return record;
 }
@@ -71,6 +84,7 @@ function deleteWarga_(body, payload) {
   requireSuperAdmin(user);
   const wargaId = getRequiredValue_(payload.warga_id, "warga_id wajib diisi.");
   deleteRowById(CONFIG.SHEETS.WARGA, "warga_id", wargaId);
+  bumpDataVersion_(["WARGA"]);
   logAction(user.user_id, "delete_warga", wargaId);
   return true;
 }
@@ -144,6 +158,7 @@ function importWargaBatch_(body, payload) {
   });
 
   logAction(user.user_id, "import_warga_batch", "rows:" + rows.length);
+  bumpDataVersion_(["WARGA"]);
   return result;
 }
 
