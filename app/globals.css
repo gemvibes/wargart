@@ -2908,6 +2908,12 @@ a.quick-list-item::after {
 }
 
 @media (max-width: 720px) {
+  .content-body,
+  .section-stack,
+  .dashboard-stack {
+    gap: 14px;
+  }
+
   .sidebar {
     gap: 12px;
     padding: 0;
@@ -2923,8 +2929,8 @@ a.quick-list-item::after {
   .brand {
     display: grid;
     align-content: start;
-    padding: 20px 20px 18px;
-    border-radius: 24px;
+    padding: 18px 18px 16px;
+    border-radius: 22px;
     border-color: rgba(15, 118, 110, 0.14);
     background: #ffffff;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
@@ -2932,7 +2938,7 @@ a.quick-list-item::after {
 
   .brand h1 {
     margin: 0;
-    font-size: clamp(1.9rem, 1.45rem + 3vw, 2.35rem);
+    font-size: clamp(1.82rem, 1.45rem + 2.5vw, 2.18rem);
     font-weight: 800;
     line-height: 0.96;
     letter-spacing: -0.05em;
@@ -2942,15 +2948,15 @@ a.quick-list-item::after {
 
   .brand p {
     display: block;
-    margin-top: 8px;
-    font-size: 0.88rem;
-    line-height: 1.5;
+    margin-top: 6px;
+    font-size: 0.82rem;
+    line-height: 1.45;
     color: #64748b;
   }
 
   .brand-chip {
-    margin-top: 14px;
-    font-size: 0.76rem;
+    margin-top: 12px;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -2959,22 +2965,22 @@ a.quick-list-item::after {
   .sidebar-footer {
     display: grid;
     align-content: space-between;
-    gap: 12px;
+    gap: 10px;
     min-width: 0;
-    padding: 18px;
-    border-radius: 24px;
+    padding: 16px;
+    border-radius: 22px;
     border: 1px solid #dce5e3;
     background: #ffffff;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
   }
 
   .sidebar-footer-copy strong {
-    font-size: 0.98rem;
+    font-size: 0.92rem;
     line-height: 1.25;
   }
 
   .sidebar-role {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     line-height: 1.5;
   }
 
@@ -2988,6 +2994,7 @@ a.quick-list-item::after {
   }
 
   .main-content {
+    gap: 16px;
     padding: 0 0 calc(116px + env(safe-area-inset-bottom));
   }
 
@@ -3006,15 +3013,15 @@ a.quick-list-item::after {
     position: relative;
     top: auto;
     gap: 0;
-    padding: 22px 22px 24px;
-    border-radius: 26px;
+    padding: 18px 18px 20px;
+    border-radius: 22px;
     border-color: #dce5e3;
     background: #ffffff;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
   }
 
   .topbar-context {
-    gap: 8px;
+    gap: 6px;
   }
 
   .topbar-eyebrow {
@@ -3023,22 +3030,22 @@ a.quick-list-item::after {
   }
 
   .topbar-context strong {
-    font-size: clamp(1.4rem, 1.2rem + 1vw, 1.62rem);
+    font-size: clamp(1.28rem, 1.12rem + 0.9vw, 1.48rem);
     line-height: 1.1;
   }
 
   .topbar-context p {
-    font-size: 0.9rem;
-    line-height: 1.55;
+    font-size: 0.84rem;
+    line-height: 1.5;
   }
 
   .topbar-meta {
-    margin-top: 16px;
+    margin-top: 12px;
     justify-items: start;
   }
 
   .topbar-date {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
   }
 
   .topbar-user {
@@ -3098,17 +3105,19 @@ a.quick-list-item::after {
   }
 
   .page-header {
-    gap: 12px;
+    gap: 10px;
     padding: 0;
   }
 
   .page-header h2 {
-    font-size: clamp(1.55rem, 1.3rem + 1vw, 1.78rem);
+    font-size: clamp(1.78rem, 1.5rem + 1vw, 2rem);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
   }
 
   .page-header p {
     font-size: 0.88rem;
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
   .summary-grid {
@@ -3126,6 +3135,284 @@ a.quick-list-item::after {
   .stat-card {
     border-radius: 24px;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  }
+
+  .stat-card-label,
+  .summary-grid > .card .muted {
+    margin-bottom: 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .stat-card-value,
+  .summary-grid > .card h3 {
+    font-size: clamp(1.78rem, 1.5rem + 1vw, 2.1rem);
+  }
+
+  .dashboard-layout,
+  .dashboard-feature-body,
+  .dashboard-compact-list {
+    gap: 10px;
+  }
+
+  .dashboard-feature-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .dashboard-section-header {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .dashboard-section-header h3 {
+    font-size: 1.15rem;
+  }
+
+  .dashboard-highlight-card,
+  .dashboard-compact-item {
+    border-radius: 18px;
+  }
+
+  .dashboard-highlight-card {
+    padding: 16px;
+  }
+
+  .dashboard-highlight-card strong {
+    font-size: 1.15rem;
+  }
+
+  .dashboard-highlight-card p,
+  .dashboard-compact-item p {
+    font-size: 0.84rem;
+  }
+
+  .toolbar {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .field {
+    gap: 8px;
+  }
+
+  .field label,
+  .label-row label {
+    font-size: 0.8rem;
+  }
+
+  .input,
+  .select {
+    min-height: 46px;
+    border-radius: 14px;
+  }
+
+  .textarea {
+    border-radius: 16px;
+  }
+
+  .list-toolbar {
+    gap: 10px;
+  }
+
+  .list-size-control {
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e5eceb;
+    border-radius: 18px;
+    background: #f9fbfa;
+  }
+
+  .list-size-control .select {
+    min-width: 120px;
+  }
+
+  .warga-mobile-list,
+  .kegiatan-mobile-list,
+  .rekap-mobile-list,
+  .mobile-card-list {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .warga-mobile-card,
+  .mobile-data-card {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 18px;
+    border-color: #dce5e3;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  }
+
+  .warga-mobile-head,
+  .mobile-data-header {
+    gap: 10px;
+  }
+
+  .warga-mobile-head strong,
+  .mobile-data-header strong {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .warga-mobile-grid,
+  .mobile-data-body {
+    gap: 10px;
+  }
+
+  .warga-mobile-item,
+  .mobile-data-row {
+    gap: 5px;
+  }
+
+  .warga-mobile-item {
+    padding: 8px 10px;
+    border: 1px solid #edf3f1;
+    border-radius: 14px;
+    background: #f9fbfa;
+  }
+
+  .warga-mobile-label,
+  .mobile-data-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  .mobile-data-body {
+    padding-top: 4px;
+    border-top: 1px solid #edf3f1;
+  }
+
+  .mobile-data-actions,
+  .warga-mobile-actions {
+    gap: 8px;
+  }
+
+  .mobile-data-actions .button,
+  .warga-mobile-actions .button {
+    min-height: 42px;
+    border-radius: 14px;
+  }
+
+  .actions-row {
+    gap: 8px;
+  }
+
+  .actions-row .button {
+    min-height: 40px;
+    border-radius: 14px;
+  }
+
+  .rekap-filters-card,
+  .rekap-table-card,
+  .attendance-section-card,
+  .photo-uploader-card,
+  .activity-info-card,
+  .activity-minutes-card {
+    border-radius: 22px;
+  }
+
+  .rekap-filter-sections {
+    display: grid;
+    gap: 12px;
+  }
+
+  .filter-section-card {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #e8efed;
+    border-radius: 18px;
+    background: #f9fbfa;
+  }
+
+  .filter-section-head {
+    display: grid;
+    gap: 4px;
+  }
+
+  .filter-section-head strong {
+    font-size: 0.92rem;
+    color: var(--text-strong);
+  }
+
+  .rekap-table-card .mobile-card-list {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .rekap-table-card .mobile-data-card {
+    box-shadow: none;
+    background: #fbfcfc;
+  }
+
+  .quick-list,
+  .photo-grid,
+  .attendance-list {
+    gap: 10px;
+  }
+
+  .quick-list-item {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .activity-detail-grid {
+    gap: 10px;
+  }
+
+  .activity-info-card,
+  .activity-minutes-card {
+    padding: 16px;
+  }
+
+  .attendance-list-surface {
+    padding: 10px;
+    border-radius: 18px;
+    background: #f9fbfa;
+  }
+
+  .attendance-row {
+    gap: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    border: 1px solid #e5eceb;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  }
+
+  .attendance-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .attendance-row .list-row {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+
+  .attendance-row .input {
+    min-height: 42px;
+  }
+
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-card {
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  }
+
+  .photo-body {
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .photo-body .button {
+    min-height: 42px;
+    border-radius: 14px;
   }
 
   .toolbar,

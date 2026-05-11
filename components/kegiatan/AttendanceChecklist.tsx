@@ -44,7 +44,7 @@ export function AttendanceChecklist({
   }
 
   return (
-    <div className="card">
+    <div className="card attendance-section-card">
       <div className="modal-header">
         <div>
           <h3>Daftar Hadir</h3>
@@ -107,7 +107,7 @@ export function AttendanceChecklist({
             </div>
           </div>
 
-          <div className="attendance-list scroll-surface" style={{ maxHeight: listHeight }}>
+          <div className="attendance-list scroll-surface attendance-list-surface" style={{ maxHeight: listHeight }}>
             {filteredItems.map((item) => (
               <div className="attendance-row" key={item.warga_id}>
                 <div>

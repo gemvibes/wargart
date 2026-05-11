@@ -73,7 +73,7 @@ export function PhotoUploader({
   }
 
   return (
-    <div className="card">
+    <div className="card photo-uploader-card">
       <div className="modal-header">
         <div>
           <h3>Dokumentasi Foto</h3>

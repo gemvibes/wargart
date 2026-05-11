@@ -27,14 +27,14 @@ const menuItems = [
     label: "Daftar Kegiatan",
     shortLabel: "Kegiatan",
     icon: "kegiatan",
-    context: "Pantau kegiatan, hadir, dan dokumentasi."
+    context: "Kelola kegiatan dan dokumentasi warga."
   },
   {
     href: "/rekap-kehadiran",
     label: "Rekap Kehadiran",
     shortLabel: "Rekap",
     icon: "rekap",
-    context: "Lihat ringkasan kehadiran warga."
+    context: "Pantau tingkat kehadiran warga."
   }
 ] as const;
 
@@ -89,7 +89,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <h1>{APP_NAME.toUpperCase()}</h1>
+          <h1>{APP_NAME}</h1>
           <p>{APP_TAGLINE}</p>
           <span className="brand-eyebrow brand-chip">RT 03 • RW 03</span>
         </div>

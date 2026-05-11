@@ -14,7 +14,7 @@ export function AttendanceSummaryTable({
   const listStyle = { maxHeight: listHeight } as CSSProperties;
 
   return (
-    <div className="card">
+    <div className="card rekap-table-card">
       <div className="rekap-desktop-list scroll-surface table-wrap" style={listStyle}>
         <table className="table">
           <thead>
@@ -59,8 +59,12 @@ export function AttendanceSummaryTable({
           <article className="mobile-data-card" key={row.warga_id}>
             <div className="mobile-data-header">
               <div>
-                <strong>{index + 1}. {row.nama}</strong>
-                <p className="helper-text">Dawis {row.dawis}</p>
+                <strong>
+                  {index + 1}. {row.nama}
+                </strong>
+                <p className="helper-text">
+                  Dawis {row.dawis} · Rumah {row.nomor_rumah || "-"}
+                </p>
               </div>
               <AttendanceCategoryBadge category={row.kategori_kehadiran} />
             </div>

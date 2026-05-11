@@ -108,7 +108,7 @@ export default function KegiatanPage() {
     <div className="section-stack">
       <PageHeader
         title="Daftar Kegiatan"
-        description="Kelola kegiatan warga, status Draft/Final, dan akses detail untuk daftar hadir serta dokumentasi."
+        description="Kelola kegiatan warga, status, daftar hadir, dan dokumentasi."
         actions={
           <RoleGuard allow="superadmin">
             <button
