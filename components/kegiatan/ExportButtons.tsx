@@ -19,7 +19,7 @@ export function ExportButtons({
   }
 
   return (
-    <>
+    <div className="export-actions">
       <button
         className="button secondary"
         disabled={loadingFormat !== ""}
@@ -36,7 +36,6 @@ export function ExportButtons({
       >
         {loadingFormat === "pdf" ? "Mengekspor..." : "Export PDF"}
       </button>
-    </>
+    </div>
   );
 }
-

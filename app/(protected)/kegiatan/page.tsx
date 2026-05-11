@@ -105,7 +105,7 @@ export default function KegiatanPage() {
   const listStyle = { maxHeight: listHeight } as CSSProperties;
 
   return (
-    <div className="section-stack">
+    <div className="section-stack kegiatan-page">
       <PageHeader
         title="Daftar Kegiatan"
         description="Kelola kegiatan warga, status, daftar hadir, dan dokumentasi."

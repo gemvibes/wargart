@@ -166,7 +166,7 @@ export default function KegiatanDetailPage() {
   const { kegiatan, photos } = detail;
 
   return (
-    <div className="section-stack">
+    <div className="section-stack kegiatan-detail-page">
       <PageHeader
         title={kegiatan.nama_kegiatan}
         description="Kelola daftar hadir, notulen, dokumentasi, dan export laporan kegiatan."

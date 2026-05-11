@@ -2841,6 +2841,10 @@ a.quick-list-item::after {
 }
 
 @media (max-width: 720px) {
+  .detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
   .content-body,
   .section-stack,
   .dashboard-stack {
@@ -2948,6 +2952,12 @@ a.quick-list-item::after {
     border-radius: 17px;
   }
 
+  .export-actions {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+  }
+
   .actions-row .button {
     width: 100%;
   }
@@ -3042,6 +3052,29 @@ a.quick-list-item::after {
     gap: 10px;
   }
 
+  .kegiatan-page .page-header,
+  .kegiatan-detail-page .page-header {
+    margin-bottom: 2px;
+  }
+
+  .kegiatan-page .page-header h2,
+  .kegiatan-detail-page .page-header h2 {
+    color: #102033;
+  }
+
+  .kegiatan-page .page-actions .button.primary,
+  .kegiatan-detail-page .button.primary,
+  .kegiatan-detail-page .page-actions .button.primary {
+    background: linear-gradient(135deg, #0f766e 0%, #0e7490 100%);
+    box-shadow: 0 10px 22px rgba(14, 116, 144, 0.16);
+  }
+
+  .kegiatan-page .page-actions .button.secondary,
+  .kegiatan-detail-page .page-actions .button.secondary {
+    border-color: rgba(14, 116, 144, 0.18);
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  }
+
   .dashboard-feature-card {
     padding: 18px;
     border-radius: 22px;
@@ -3131,6 +3164,16 @@ a.quick-list-item::after {
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
   }
 
+  .kegiatan-page .mobile-data-card,
+  .kegiatan-detail-page .card,
+  .kegiatan-detail-page .quick-list-item,
+  .kegiatan-detail-page .photo-card {
+    border-color: rgba(14, 116, 144, 0.14);
+    background:
+      radial-gradient(circle at top right, rgba(37, 99, 235, 0.05), transparent 34%),
+      linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  }
+
   .warga-mobile-head,
   .mobile-data-header {
     gap: 10px;
@@ -3179,6 +3222,23 @@ a.quick-list-item::after {
   .warga-mobile-actions .button {
     min-height: 42px;
     border-radius: 14px;
+  }
+
+  .kegiatan-page .mobile-data-header .helper-text,
+  .kegiatan-detail-page .helper-text {
+    color: #5f7086;
+  }
+
+  .kegiatan-page .badge.green,
+  .kegiatan-detail-page .badge.green {
+    background: rgba(15, 118, 110, 0.12);
+    border-color: rgba(15, 118, 110, 0.18);
+  }
+
+  .kegiatan-page .badge.yellow,
+  .kegiatan-detail-page .badge.yellow {
+    background: rgba(234, 179, 8, 0.12);
+    border-color: rgba(234, 179, 8, 0.18);
   }
 
   .actions-row {
@@ -3254,6 +3314,28 @@ a.quick-list-item::after {
     padding: 16px;
   }
 
+  .activity-info-card .modal-header,
+  .activity-minutes-card .modal-header,
+  .photo-uploader-card .modal-header,
+  .attendance-section-card .modal-header {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .activity-info-card .quick-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activity-info-card .quick-list-item:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .activity-minutes-scroll {
+    max-height: none;
+    padding-right: 0;
+    line-height: 1.65;
+  }
+
   .attendance-list-surface {
     padding: 10px;
     border-radius: 18px;
@@ -3302,6 +3384,11 @@ a.quick-list-item::after {
     border-radius: 14px;
   }
 
+  .photo-body .button.ghost {
+    border: 1px solid rgba(14, 116, 144, 0.14);
+    background: #ffffff;
+  }
+
   .toolbar,
   .filter-grid,
   .form-grid,
@@ -3331,5 +3418,13 @@ a.quick-list-item::after {
   .summary-grid,
   .stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .activity-info-card .quick-list {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-info-card .quick-list-item:last-child {
+    grid-column: auto;
   }
 }
