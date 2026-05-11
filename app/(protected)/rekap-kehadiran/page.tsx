@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { buildRekapCsv } from "@/lib/csv";
 import { apiClient } from "@/lib/api/client";
 import { RekapFilters, RekapKehadiranItem } from "@/lib/types";
+import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { downloadTextFile, formatPercent } from "@/lib/utils";
 
 const initialFilters: RekapFilters = {
@@ -30,12 +31,30 @@ export default function RekapKehadiranPage() {
   const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const debouncedSearch = useDebouncedValue(filters.search);
+  const requestFilters = useMemo(
+    () => ({
+      ...filters,
+      search: debouncedSearch
+    }),
+    [
+      debouncedSearch,
+      filters.dawis,
+      filters.status_tinggal,
+      filters.kategori,
+      filters.jenis_kegiatan,
+      filters.tanggal_mulai,
+      filters.tanggal_selesai,
+      filters.sort_by,
+      filters.sort_order
+    ]
+  );
 
   async function loadRekap() {
     setLoading(true);
     setError("");
     try {
-      const data = await apiClient.getRekapKehadiran(filters);
+      const data = await apiClient.getRekapKehadiran(requestFilters);
       setRows(data);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Gagal memuat rekap kehadiran.");
@@ -46,7 +65,7 @@ export default function RekapKehadiranPage() {
 
   useEffect(() => {
     loadRekap();
-  }, [filters]);
+  }, [requestFilters]);
 
   const summary = useMemo(() => {
     const totalWargaAktif = rows.length;

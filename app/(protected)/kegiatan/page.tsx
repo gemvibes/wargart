@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { JENIS_KEGIATAN_OPTIONS } from "@/lib/constants";
 import { apiClient } from "@/lib/api/client";
 import { Kegiatan, KegiatanPayload, KegiatanPhotoDraft } from "@/lib/types";
+import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { formatDate, formatTimeRange } from "@/lib/utils";
 
 export default function KegiatanPage() {
@@ -25,16 +26,19 @@ export default function KegiatanPage() {
   const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
   const [selected, setSelected] = useState<Kegiatan | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const debouncedSearch = useDebouncedValue(search);
+  const debouncedBulan = useDebouncedValue(bulan);
+  const debouncedTahun = useDebouncedValue(tahun);
 
   async function loadKegiatan() {
     setLoading(true);
     setError("");
     try {
       const data = await apiClient.getKegiatan({
-        search,
+        search: debouncedSearch,
         jenis_kegiatan: jenis,
-        bulan,
-        tahun
+        bulan: debouncedBulan,
+        tahun: debouncedTahun
       });
       setKegiatan(data);
     } catch (loadError) {
@@ -46,7 +50,7 @@ export default function KegiatanPage() {
 
   useEffect(() => {
     loadKegiatan();
-  }, [search, jenis, bulan, tahun]);
+  }, [debouncedSearch, jenis, debouncedBulan, debouncedTahun]);
 
   async function handleSave(payload: KegiatanPayload, photos: KegiatanPhotoDraft[]) {
     setSaving(true);

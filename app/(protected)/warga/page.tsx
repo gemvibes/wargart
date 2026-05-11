@@ -10,6 +10,7 @@ import { WargaFormModal } from "@/components/warga/WargaFormModal";
 import { DAWIS_OPTIONS, STATUS_TINGGAL_OPTIONS } from "@/lib/constants";
 import { apiClient } from "@/lib/api/client";
 import { Warga, WargaPayload } from "@/lib/types";
+import { useDebouncedValue } from "@/lib/useDebouncedValue";
 export default function WargaPage() {
   const [warga, setWarga] = useState<Warga[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,13 +22,14 @@ export default function WargaPage() {
   const [visibleCount, setVisibleCount] = useState<10 | 20>(10);
   const [selected, setSelected] = useState<Warga | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const debouncedSearch = useDebouncedValue(search);
 
   async function loadWarga() {
     setLoading(true);
     setError("");
     try {
       const data = await apiClient.getWarga({
-        search,
+        search: debouncedSearch,
         dawis,
         status_tinggal: statusTinggal
       });
@@ -41,7 +43,7 @@ export default function WargaPage() {
 
   useEffect(() => {
     loadWarga();
-  }, [search, dawis, statusTinggal]);
+  }, [debouncedSearch, dawis, statusTinggal]);
 
   async function handleSave(payload: WargaPayload) {
     setSaving(true);

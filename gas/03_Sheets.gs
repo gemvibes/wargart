@@ -1,55 +1,103 @@
+var spreadsheetCache_;
+var sheetCache_ = {};
+var sheetHeadersCache_ = {};
+var sheetObjectsCache_ = {};
+
 function getSpreadsheet_() {
+  if (spreadsheetCache_) {
+    return spreadsheetCache_;
+  }
   const spreadsheetId = PropertiesService.getScriptProperties().getProperty(
     CONFIG.PROPERTIES.SPREADSHEET_ID
   );
   if (!spreadsheetId) {
     throw new Error("Property SPREADSHEET_ID belum diatur.");
   }
-  return SpreadsheetApp.openById(spreadsheetId);
+  spreadsheetCache_ = SpreadsheetApp.openById(spreadsheetId);
+  return spreadsheetCache_;
 }
 
 function getSheet(name) {
+  if (sheetCache_[name]) {
+    return sheetCache_[name];
+  }
   const sheet = getSpreadsheet_().getSheetByName(name);
   if (!sheet) {
     throw new Error("Sheet tidak ditemukan: " + name);
   }
+  sheetCache_[name] = sheet;
   return sheet;
 }
 
-function readSheetAsObjects(sheetName) {
+function invalidateSheetCache_(sheetName) {
+  delete sheetHeadersCache_[sheetName];
+  delete sheetObjectsCache_[sheetName];
+}
+
+function getSheetHeaders_(sheetName) {
+  if (sheetHeadersCache_[sheetName]) {
+    return sheetHeadersCache_[sheetName];
+  }
+
   const sheet = getSheet(sheetName);
-  const values = sheet.getDataRange().getValues();
-  const displayValues = sheet.getDataRange().getDisplayValues();
-  if (values.length <= 1) return [];
+  const lastColumn = sheet.getLastColumn();
+  if (lastColumn < 1) {
+    sheetHeadersCache_[sheetName] = [];
+    return sheetHeadersCache_[sheetName];
+  }
+
+  sheetHeadersCache_[sheetName] = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
+  return sheetHeadersCache_[sheetName];
+}
+
+function readSheetAsObjects(sheetName) {
+  if (sheetObjectsCache_[sheetName]) {
+    return sheetObjectsCache_[sheetName];
+  }
+
+  const sheet = getSheet(sheetName);
+  const range = sheet.getDataRange();
+  const values = range.getValues();
+  if (values.length <= 1) {
+    sheetObjectsCache_[sheetName] = [];
+    return sheetObjectsCache_[sheetName];
+  }
 
   const headers = values[0];
-  return values.slice(1).map(function (row, rowIndex) {
+  const hasTimeColumns =
+    headers.indexOf("waktu_mulai") !== -1 || headers.indexOf("waktu_selesai") !== -1;
+  const displayValues = hasTimeColumns ? range.getDisplayValues() : null;
+
+  sheetObjectsCache_[sheetName] = values.slice(1).map(function (row, rowIndex) {
     const item = {};
     headers.forEach(function (header, index) {
       const key = String(header);
       if (key === "waktu_mulai" || key === "waktu_selesai") {
-        item[key] = displayValues[rowIndex + 1][index];
+        item[key] = displayValues ? displayValues[rowIndex + 1][index] : row[index];
         return;
       }
       item[key] = row[index];
     });
     return item;
   });
+
+  return sheetObjectsCache_[sheetName];
 }
 
 function appendRow(sheetName, objectData) {
   const sheet = getSheet(sheetName);
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const headers = getSheetHeaders_(sheetName);
   const row = headers.map(function (header) {
     return objectData[String(header)] !== undefined ? objectData[String(header)] : "";
   });
   sheet.appendRow(row);
+  invalidateSheetCache_(sheetName);
   return objectData;
 }
 
 function replaceSheetRows_(sheetName, rows) {
   const sheet = getSheet(sheetName);
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const headers = getSheetHeaders_(sheetName);
   const lastRow = sheet.getLastRow();
 
   if (lastRow > 1) {
@@ -67,6 +115,7 @@ function replaceSheetRows_(sheetName, rows) {
   });
 
   sheet.getRange(2, 1, values.length, headers.length).setValues(values);
+  invalidateSheetCache_(sheetName);
   return true;
 }
 
@@ -88,6 +137,7 @@ function updateRowById(sheetName, idColumn, idValue, objectData) {
         return values[rowIndex][columnIndex];
       });
       sheet.getRange(rowIndex + 1, 1, 1, headers.length).setValues([nextRow]);
+      invalidateSheetCache_(sheetName);
       return objectData;
     }
   }
@@ -107,6 +157,7 @@ function deleteRowById(sheetName, idColumn, idValue) {
   for (var rowIndex = values.length - 1; rowIndex >= 1; rowIndex -= 1) {
     if (String(values[rowIndex][idIndex]) === String(idValue)) {
       sheet.deleteRow(rowIndex + 1);
+      invalidateSheetCache_(sheetName);
       return true;
     }
   }
@@ -129,6 +180,7 @@ function deleteRowsByColumnValue_(sheetName, columnName, value) {
       sheet.deleteRow(rowIndex + 1);
     }
   }
+  invalidateSheetCache_(sheetName);
 }
 
 function generateId(prefix, sheetName, idColumn) {

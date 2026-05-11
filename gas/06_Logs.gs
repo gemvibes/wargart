@@ -1,6 +1,6 @@
 function logAction(userId, action, target) {
   const log = {
-    log_id: generateId("LOG", CONFIG.SHEETS.LOGS, "log_id"),
+    log_id: "LOG-" + new Date().getTime() + "-" + Utilities.getUuid().slice(0, 8),
     user_id: userId,
     aksi: action,
     target: target,
@@ -8,4 +8,3 @@ function logAction(userId, action, target) {
   };
   appendRow(CONFIG.SHEETS.LOGS, log);
 }
-
