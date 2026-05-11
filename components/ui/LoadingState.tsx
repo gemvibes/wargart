@@ -9,8 +9,10 @@ export function LoadingState({
 }) {
   return (
     <div className={cn("loading-state", fullPage && "login-screen")}>
-      <strong>{message}</strong>
+      <span aria-hidden="true" className="loading-spinner" />
+      <div className="state-copy">
+        <strong>{message}</strong>
+      </div>
     </div>
   );
 }
-

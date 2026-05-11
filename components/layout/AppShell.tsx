@@ -8,10 +8,34 @@ import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
-  { href: "/dashboard", label: "Dashboard", shortLabel: "Beranda", icon: "dashboard" },
-  { href: "/warga", label: "Data Warga", shortLabel: "Warga", icon: "warga" },
-  { href: "/kegiatan", label: "Daftar Kegiatan", shortLabel: "Kegiatan", icon: "kegiatan" },
-  { href: "/rekap-kehadiran", label: "Rekap Kehadiran", shortLabel: "Rekap", icon: "rekap" }
+  {
+    href: "/dashboard",
+    label: "Dashboard",
+    shortLabel: "Beranda",
+    icon: "dashboard",
+    context: "Ringkasan administrasi RT"
+  },
+  {
+    href: "/warga",
+    label: "Data Warga",
+    shortLabel: "Warga",
+    icon: "warga",
+    context: "Kelola data warga dan status keluarga"
+  },
+  {
+    href: "/kegiatan",
+    label: "Daftar Kegiatan",
+    shortLabel: "Kegiatan",
+    icon: "kegiatan",
+    context: "Pantau kegiatan, hadir, dan dokumentasi"
+  },
+  {
+    href: "/rekap-kehadiran",
+    label: "Rekap Kehadiran",
+    shortLabel: "Rekap",
+    icon: "rekap",
+    context: "Lihat ringkasan kehadiran warga"
+  }
 ] as const;
 
 function NavIcon({ icon }: { icon: "dashboard" | "warga" | "kegiatan" | "rekap" }) {
@@ -52,6 +76,14 @@ function NavIcon({ icon }: { icon: "dashboard" | "warga" | "kegiatan" | "rekap" 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const activeMenu = menuItems.find((item) => pathname.startsWith(item.href)) ?? menuItems[0];
+  const todayLabel = new Intl.DateTimeFormat("id-ID", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  }).format(new Date());
+  const roleLabel = user?.role === "superadmin" ? "Superadmin" : "Viewer";
 
   return (
     <div className="app-shell">
@@ -83,7 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="sidebar-footer">
           <div className="sidebar-footer-copy">
             <strong>{user?.nama}</strong>
-            <p className="helper-text sidebar-role">{user?.role === "superadmin" ? "Superadmin" : "Viewer"}</p>
+            <p className="helper-text sidebar-role">{roleLabel}</p>
           </div>
           <button className="button secondary sidebar-logout" onClick={logout} type="button">
             Keluar
@@ -91,7 +123,25 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="main-content">{children}</main>
+      <main className="main-content">
+        <header className="topbar">
+          <div className="topbar-context">
+            <span className="topbar-eyebrow">Workspace</span>
+            <strong>{activeMenu.label}</strong>
+            <p>{activeMenu.context}</p>
+          </div>
+
+          <div className="topbar-meta">
+            <span className="topbar-date">{todayLabel}</span>
+            <div className="topbar-user">
+              <span className="topbar-user-name">{user?.nama}</span>
+              <span className="topbar-user-role">{roleLabel}</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="content-body">{children}</div>
+      </main>
     </div>
   );
 }
