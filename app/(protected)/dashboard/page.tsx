@@ -81,7 +81,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="dashboard-stack">
+    <div className="dashboard-stack dashboard-page">
       <PageHeader
         title={`Halo, ${user?.nama ?? "Pengguna"}`}
         description="Pantau ringkasan administrasi RT dari satu tampilan."

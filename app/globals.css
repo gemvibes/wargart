@@ -2366,6 +2366,41 @@ textarea:focus-visible {
   gap: 14px;
 }
 
+.dashboard-page .dashboard-stat-grid .stat-card,
+.dashboard-page .dashboard-feature-card,
+.dashboard-page .dashboard-highlight-card,
+.dashboard-page .dashboard-compact-item {
+  border-color: rgba(14, 116, 144, 0.14);
+}
+
+.dashboard-page .dashboard-stat-grid .stat-card {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.05), transparent 34%),
+    linear-gradient(180deg, rgba(15, 118, 110, 0.05) 0%, #ffffff 34%, #ffffff 100%);
+}
+
+.dashboard-page .dashboard-feature-card {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.06), transparent 32%),
+    linear-gradient(180deg, rgba(15, 118, 110, 0.05) 0%, #ffffff 34%, #fbfdff 100%);
+}
+
+.dashboard-page .dashboard-highlight-card {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.06), transparent 30%),
+    linear-gradient(180deg, rgba(15, 118, 110, 0.05) 0%, #ffffff 42%, #fbfdff 100%);
+}
+
+.dashboard-page .dashboard-compact-item {
+  background:
+    linear-gradient(180deg, rgba(15, 118, 110, 0.03) 0%, #ffffff 100%);
+}
+
+.dashboard-page .dashboard-kicker {
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--primary-dark);
+}
+
 .dashboard-section-header {
   margin-bottom: 18px;
 }
@@ -2952,6 +2987,15 @@ a.quick-list-item::after {
     border-radius: 17px;
   }
 
+  .dashboard-page .page-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dashboard-page .page-actions .button {
+    min-height: 46px;
+  }
+
   .export-actions {
     display: grid;
     gap: 10px;
@@ -3020,6 +3064,21 @@ a.quick-list-item::after {
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  .dashboard-page .dashboard-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dashboard-page .dashboard-stat-grid .stat-card {
+    min-height: 118px;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .dashboard-page .dashboard-stat-grid .stat-card:last-child {
+    grid-column: 1 / -1;
   }
 
   .summary-grid > .card {
@@ -3105,6 +3164,10 @@ a.quick-list-item::after {
   .dashboard-highlight-card p,
   .dashboard-compact-item p {
     font-size: 0.84rem;
+  }
+
+  .dashboard-page .dashboard-inline-link {
+    font-size: 0.82rem;
   }
 
   .toolbar {
@@ -3418,6 +3481,14 @@ a.quick-list-item::after {
   .summary-grid,
   .stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-page .page-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-page .dashboard-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .activity-info-card .quick-list {
