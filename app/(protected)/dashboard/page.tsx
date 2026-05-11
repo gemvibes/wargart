@@ -10,7 +10,7 @@ import { LoadingState } from "@/components/ui/LoadingState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatCard } from "@/components/ui/StatCard";
 import { apiClient } from "@/lib/api/client";
-import { DashboardSummary } from "@/lib/types";
+import { DashboardSummary, Kegiatan, Warga } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function DashboardPage() {
@@ -19,12 +19,40 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  function buildDashboardSummary(warga: Warga[], kegiatan: Kegiatan[]): DashboardSummary {
+    const kegiatanTerbaru = [...kegiatan]
+      .sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime())
+      .slice(0, 5);
+
+    return {
+      warga_aktif: warga.filter((item) => item.status === "Aktif").length,
+      total_kegiatan: kegiatan.length,
+      kegiatan_final: kegiatan.filter((item) => item.status_kegiatan === "Final").length,
+      kegiatan_terbaru: kegiatanTerbaru
+    };
+  }
+
   async function loadDashboard() {
     setLoading(true);
     setError("");
     try {
-      const summaryData = await apiClient.getDashboardSummary();
-      setSummary(summaryData);
+      try {
+        const summaryData = await apiClient.getDashboardSummary();
+        setSummary(summaryData);
+      } catch (summaryError) {
+        if (
+          summaryError instanceof Error &&
+          summaryError.message.includes("Action GET tidak dikenali: getDashboardSummary")
+        ) {
+          const [wargaData, kegiatanData] = await Promise.all([
+            apiClient.getWarga(),
+            apiClient.getKegiatan()
+          ]);
+          setSummary(buildDashboardSummary(wargaData, kegiatanData));
+        } else {
+          throw summaryError;
+        }
+      }
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Gagal memuat dashboard.");
     } finally {
