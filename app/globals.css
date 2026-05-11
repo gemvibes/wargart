@@ -845,6 +845,10 @@ img {
   gap: 10px;
 }
 
+.mobile-only.warga-mobile-list {
+  display: none;
+}
+
 .warga-mobile-card {
   display: grid;
   gap: 10px;
@@ -2013,6 +2017,10 @@ a.quick-list-item::after {
   .warga-mobile-list {
     gap: 8px;
     padding: 8px;
+  }
+
+  .mobile-only.warga-mobile-list {
+    display: grid;
   }
 
   .warga-mobile-card {
