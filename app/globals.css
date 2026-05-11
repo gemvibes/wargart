@@ -2975,11 +2975,40 @@ a.quick-list-item::after {
   .brand {
     display: grid;
     align-content: start;
+    position: relative;
+    overflow: hidden;
     padding: 18px 18px 16px;
     border-radius: 22px;
-    border-color: rgba(15, 118, 110, 0.14);
-    background: #ffffff;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(109, 180, 200, 0.18);
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 42%),
+      linear-gradient(138deg, rgba(20, 129, 122, 0.96) 0%, rgba(15, 118, 110, 0.94) 42%, rgba(14, 116, 144, 0.92) 74%, rgba(37, 99, 235, 0.82) 100%);
+    box-shadow:
+      0 10px 28px rgba(15, 23, 42, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .brand::before {
+    content: "";
+    position: absolute;
+    inset: auto -18px -50px auto;
+    width: 118px;
+    height: 118px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    filter: blur(8px);
+  }
+
+  .brand::after {
+    content: "";
+    position: absolute;
+    inset: 18px auto auto 34%;
+    width: 122px;
+    height: 122px;
+    border-radius: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    opacity: 0.6;
+    transform: rotate(16deg);
   }
 
   .brand h1 {
@@ -2989,7 +3018,9 @@ a.quick-list-item::after {
     line-height: 0.96;
     letter-spacing: -0.05em;
     text-transform: uppercase;
-    color: #0f172a;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
   }
 
   .brand p {
@@ -2997,7 +3028,9 @@ a.quick-list-item::after {
     margin-top: 6px;
     font-size: 0.82rem;
     line-height: 1.45;
-    color: #64748b;
+    color: rgba(239, 248, 255, 0.88);
+    position: relative;
+    z-index: 1;
   }
 
   .brand-chip {
@@ -3006,28 +3039,55 @@ a.quick-list-item::after {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.14);
+    color: #f8fffd;
+    position: relative;
+    z-index: 1;
   }
 
   .sidebar-footer {
     display: grid;
     align-content: space-between;
+    position: relative;
+    overflow: hidden;
     gap: 10px;
     min-width: 0;
     padding: 16px;
     border-radius: 22px;
-    border: 1px solid #dce5e3;
-    background: #ffffff;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(127, 171, 186, 0.16);
+    background:
+      radial-gradient(circle at top right, rgba(14, 116, 144, 0.08), transparent 42%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 249, 249, 0.98) 66%, rgba(239, 246, 251, 0.98) 100%);
+    box-shadow:
+      0 10px 28px rgba(15, 23, 42, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  .sidebar-footer::before {
+    content: "";
+    position: absolute;
+    inset: -18px auto auto -14px;
+    width: 72px;
+    height: 72px;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.08);
+    filter: blur(4px);
   }
 
   .sidebar-footer-copy strong {
     font-size: 0.92rem;
     line-height: 1.25;
+    position: relative;
+    z-index: 1;
   }
 
   .sidebar-role {
     font-size: 0.76rem;
     line-height: 1.5;
+    color: #597083;
+    position: relative;
+    z-index: 1;
   }
 
   .sidebar .button.secondary,
@@ -3037,6 +3097,11 @@ a.quick-list-item::after {
     padding: 0 14px;
     border-radius: 13px;
     font-size: 0.86rem;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(186, 214, 220, 0.68);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
   }
 
   .main-content {
@@ -3085,12 +3150,14 @@ a.quick-list-item::after {
     right: 12px;
     bottom: calc(10px + env(safe-area-inset-bottom));
     padding: 8px;
-    border: 1px solid #dce5e3;
+    border: 1px solid rgba(137, 190, 193, 0.22);
     border-radius: 22px;
-    background: rgba(255, 255, 255, 0.98);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(240, 248, 247, 0.98) 60%, rgba(237, 245, 251, 0.98) 100%);
     box-shadow:
       0 10px 24px rgba(15, 23, 42, 0.08),
-      0 18px 34px rgba(15, 23, 42, 0.08);
+      0 18px 34px rgba(15, 23, 42, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(12px);
   }
 
@@ -3101,12 +3168,13 @@ a.quick-list-item::after {
   }
 
   .nav-link:hover {
-    background: #f6f8fa;
+    background: rgba(255, 255, 255, 0.66);
   }
 
   .nav-link.active {
-    background: #eaf6f3;
+    background: linear-gradient(180deg, rgba(234, 246, 243, 0.96), rgba(223, 241, 237, 0.98));
     color: var(--primary-dark);
+    box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.06);
   }
 
   .nav-link::before {
