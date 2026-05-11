@@ -66,6 +66,12 @@ npm run dev
 - Tambahkan environment variable `NEXT_PUBLIC_GAS_API_URL`
 - Deploy
 
+Catatan domain produksi:
+
+- URL publik yang dipakai adalah `https://titeni.vercel.app`
+- Jika deploy dilakukan dari CLI, gunakan `npm run deploy:prod:titeni` agar deployment terbaru langsung dipromosikan ke `titeni.vercel.app`
+- Project Vercel lama masih mewarisi alias bawaan `titena.vercel.app`, jadi deploy produksi biasa tidak selalu memindahkan `titeni.vercel.app` otomatis
+
 ## Setup Google Spreadsheet
 
 Buat satu spreadsheet dengan sheet berikut:

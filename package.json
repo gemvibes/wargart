@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import:warga": "node scripts/import-warga.mjs"
+    "import:warga": "node scripts/import-warga.mjs",
+    "deploy:prod:titeni": "node scripts/deploy-titeni-domain.mjs"
   },
   "dependencies": {
     "next": "15.5.15",
