@@ -2903,6 +2903,112 @@ a.quick-list-item::after {
   border-bottom: 1px solid #edf1f5;
 }
 
+@media (min-width: 721px) {
+  .card {
+    border-color: rgba(198, 211, 219, 0.92);
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at top right, rgba(37, 99, 235, 0.055), transparent 31%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.985) 0%, rgba(248, 251, 253, 0.985) 100%);
+    box-shadow:
+      0 2px 6px rgba(15, 23, 42, 0.03),
+      0 20px 44px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  }
+
+  .card h3,
+  .card h4 {
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card,
+  .summary-grid > .card {
+    border-color: rgba(137, 190, 193, 0.28);
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at top right, rgba(37, 99, 235, 0.075), transparent 34%),
+      linear-gradient(180deg, rgba(15, 118, 110, 0.055) 0%, #ffffff 36%, #f8fbfd 100%);
+    box-shadow:
+      0 2px 6px rgba(15, 23, 42, 0.03),
+      0 18px 36px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .section-stack > .card,
+  .dashboard-feature-card,
+  .dashboard-links-card,
+  .rekap-filters-card,
+  .rekap-table-card,
+  .attendance-section-card,
+  .photo-uploader-card,
+  .activity-info-card,
+  .activity-minutes-card {
+    border-color: rgba(137, 190, 193, 0.24);
+    background:
+      radial-gradient(circle at top right, rgba(37, 99, 235, 0.06), transparent 32%),
+      linear-gradient(180deg, rgba(15, 118, 110, 0.05) 0%, rgba(255, 255, 255, 0.99) 34%, rgba(248, 251, 253, 0.99) 100%);
+  }
+
+  .dashboard-page .dashboard-stat-grid .stat-card,
+  .dashboard-page .dashboard-feature-card,
+  .dashboard-page .dashboard-highlight-card,
+  .dashboard-page .dashboard-compact-item {
+    border-color: rgba(14, 116, 144, 0.18);
+  }
+
+  .dashboard-highlight-card,
+  .dashboard-compact-item,
+  .dashboard-link-card,
+  .dashboard-mini-item,
+  .quick-list-item,
+  .filter-section-card,
+  .photo-card {
+    border-color: rgba(198, 211, 219, 0.9);
+    border-radius: 20px;
+    background:
+      radial-gradient(circle at top right, rgba(37, 99, 235, 0.04), transparent 36%),
+      linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.03),
+      0 14px 28px rgba(15, 23, 42, 0.04);
+  }
+
+  .dashboard-highlight-card:hover,
+  .dashboard-compact-item:hover,
+  .dashboard-link-card:hover,
+  a.quick-list-item:hover {
+    border-color: rgba(159, 183, 203, 0.96);
+    box-shadow:
+      0 2px 8px rgba(15, 23, 42, 0.04),
+      0 18px 34px rgba(15, 23, 42, 0.06);
+  }
+
+  .filter-section-card {
+    border-color: rgba(137, 190, 193, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 251, 250, 0.98) 100%);
+  }
+
+  .scroll-surface,
+  .card > .table-wrap {
+    border-color: rgba(198, 211, 219, 0.95);
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(250, 252, 252, 0.96) 0%, #ffffff 18%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+  }
+
+  .table thead th {
+    background:
+      linear-gradient(180deg, #fbfcff 0%, #f3f7fb 100%);
+    color: #6a7b90;
+  }
+
+  .table tbody tr:hover td {
+    background: #f8fbfd;
+  }
+}
+
 .scroll-surface::-webkit-scrollbar,
 .modal-card::-webkit-scrollbar,
 .activity-minutes-scroll::-webkit-scrollbar {
